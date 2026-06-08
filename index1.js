@@ -188,8 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---------------------------------------------------------
     //  5b. FORMULÁRIO DE CADASTRO (CRIAR CONTA)
-    //  [FACTORY]   → criarUsuario() cria o objeto padronizado
-    //  [SINGLETON] → db.adicionarUsuario() salva no localStorage
+    //  Envia dados via POST /register → banco Supabase
     //  [OBSERVER]  → notificar('novo_usuario') dispara o toast
     // ---------------------------------------------------------
     const formReg = document.getElementById('form-reg');
@@ -203,25 +202,27 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled  = true;
 
             try {
-                await new Promise(res => setTimeout(res, 1500));
+                const nome         = formReg.querySelector('input[name="nome"]')?.value         || '';
+                const sobrenome    = formReg.querySelector('input[name="sobrenome"]')?.value    || '';
+                const cpf          = formReg.querySelector('input[name="cpf"]')?.value          || '';
+                const email        = formReg.querySelector('input[name="email"]')?.value        || '';
+                const especialidade = formReg.querySelector('select[name="especialidade"]')?.value || '';
+                const senha        = formReg.querySelector('input[name="senha"]')?.value        || '';
 
-                const inputs = formReg.querySelectorAll('input, select');
-
-                // [FACTORY] — Cria usuário com estrutura padronizada
-                const usuario = EntidadeFactory.criarUsuario({
-                    nome:          inputs[0]?.value || '',
-                    sobrenome:     inputs[1]?.value || '',
-                    cpf:           inputs[2]?.value || '',
-                    email:         inputs[3]?.value || '',
-                    especialidade: formReg.querySelector('select')?.value || '',
-                    senha:         inputs[5]?.value || '',
+                const resp = await fetch('/register', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ nome, sobrenome, cpf, email, especialidade, senha }),
                 });
+                const data = await resp.json();
 
-                // [SINGLETON] — Persiste o usuário no localStorage
-                db.adicionarUsuario(usuario);
+                if (!resp.ok) {
+                    Swal.fire('Erro', data.error || 'Não foi possível criar a conta.', 'error');
+                    return;
+                }
 
                 // [OBSERVER] — Notifica sobre novo usuário
-                GerenciadorEventos.notificar('novo_usuario', usuario);
+                GerenciadorEventos.notificar('novo_usuario', { nome, email });
 
                 Swal.fire({
                     title:              'CONTA CRIADA!',
@@ -245,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---------------------------------------------------------
     //  5c. FORMULÁRIO DE LOGIN
-    //  [SINGLETON] → busca usuário no localStorage para validação
+    //  Autentica via POST /login → recebe JWT → salva no localStorage
     // ---------------------------------------------------------
     const formLogin = document.getElementById('form-login');
     if (formLogin) {
@@ -258,34 +259,35 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled  = true;
 
             try {
-                await new Promise(res => setTimeout(res, 1200));
+                const email = formLogin.querySelector('input[name="email"]')?.value || '';
+                const senha = formLogin.querySelector('input[name="senha"]')?.value || '';
 
-                // [SINGLETON] — Consulta usuários no banco de dados único
-                const emailDigitado = formLogin.querySelector('input[type="email"]')?.value || '';
-                const usuarioEncontrado = db.buscarUsuarioPorEmail(emailDigitado);
+                const resp = await fetch('/login', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ email, senha }),
+                });
+                const data = await resp.json();
 
-                if (usuarioEncontrado) {
-                    GerenciadorEventos.exibirToast(
-                        '🎖️ Acesso Concedido',
-                        `Bem-vindo(a) de volta, <strong>${usuarioEncontrado.nome}</strong>!`,
-                        'sucesso'
-                    );
-                    toggleAuth(false);
-                } else {
-                    // Fallback: simula login (para não quebrar o fluxo se não há cadastro)
-                    Swal.fire({
-                        title:              'ACESSO CONCEDIDO',
-                        text:               'Login realizado!',
-                        icon:               'success',
-                        confirmButtonColor: '#c5a666',
-                    });
-                    toggleAuth(false);
+                if (!resp.ok) {
+                    Swal.fire('Acesso Negado', data.error || 'Credenciais inválidas.', 'error');
+                    return;
                 }
 
+                localStorage.setItem('gp_token',   data.token);
+                localStorage.setItem('gp_usuario', JSON.stringify(data.usuario));
+
+                GerenciadorEventos.exibirToast(
+                    '🎖️ Acesso Concedido',
+                    `Bem-vindo(a) de volta, <strong>${data.usuario.nome}</strong>!`,
+                    'sucesso'
+                );
+                toggleAuth(false);
                 formLogin.reset();
 
             } catch (err) {
                 Swal.fire('Erro', 'Não foi possível realizar o login.', 'error');
+                console.error('[App] Erro ao fazer login:', err);
             } finally {
                 btn.innerHTML = textoOriginal;
                 btn.disabled  = false;
