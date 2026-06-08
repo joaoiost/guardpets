@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guard Pets | Intelligence, Rescue & Welfare</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/imask"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <link rel="stylesheet" href="index1.css">
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="container nav-wrapper">
+            <a href="#" class="logo">GUARD<span>PETS</span></a>
+            <nav class="nav-links">
+                <a href="#sobre">Quem Somos</a>
+                <a href="#noticias">Inteligência</a>
+                <a href="#adocao">Adoção</a>
+                <a href="#denuncia">Denúncias</a>
+                <button onclick="toggleAuth(true)" class="nav-links btn-agent" style="border:none; cursor:pointer;">PORTAL DO AGENTE</button>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1600&q=80" class="hero-bg">
+        <div class="container">
+            <div class="hero-content" data-aos="fade-right">
+                <h1>Operação <br><span style="color:var(--p-gold)">Resgate Real.</span></h1>
+                <p>O único instituto que une monitoramento via satélite, corpo jurídico especializado e reabilitação intensiva para animais em estado crítico.</p>
+                <div style="display:flex; gap:20px;">
+                    <button class="btn-full" style="width:auto; padding: 20px 40px;" onclick="location.href='#denuncia'">DENUNCIAR CRIME</button>
+                    <button class="btn-full" style="width:auto; padding: 20px 40px; background:transparent; border:2px solid #fff;" onclick="location.href='#adocao'">QUERO ADOTAR</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="sobre" class="manifesto-section">
+        <div class="container">
+            <div class="manifesto-grid">
+                <div class="manifesto-text" data-aos="fade-right">
+                    <h4>MANIFESTO INSTITUCIONAL</h4>
+                    <h2>Quem Somos e por que existimos.</h2>
+                    <p>O <b>Guard Pets Intelligence</b> não é apenas uma ONG de proteção. Somos uma força-tarefa multidisciplinar composta por advogados, veterinários e especialistas em logística tática.</p>
+                    <p>Nascemos para preencher a lacuna entre a lei escrita e a realidade das ruas. Onde a justiça falha, nós entramos com monitoramento, provas jurídicas e resgate efetivo.</p>
+                    
+                    <div class="goals-box">
+                        <div class="goal-item" data-aos="zoom-in" data-aos-delay="100">
+                            <h5>Missão</h5>
+                            <p>Erradicar os focos de maus-tratos severos através de intervenção jurídica e tática imediata.</p>
+                        </div>
+                        <div class="goal-item" data-aos="zoom-in" data-aos-delay="200">
+                            <h5>Visão</h5>
+                            <p>Tornar-se o maior centro de inteligência animalista da América Latina até 2028.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="manifesto-stats" data-aos="fade-left">
+                    <div style="background:var(--p-dark); color:#fff; padding:60px; border-radius:30px; position:relative; overflow:hidden;">
+                        <h4 style="color:var(--p-gold); margin-bottom:30px;">METAS 2026</h4>
+                        <ul style="list-style:none;">
+                            <li style="margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px;">
+                                <span style="display:block; font-size:1.5rem; font-weight:900;">5.000 Vidas</span>
+                                <span style="font-size:0.8rem; opacity:0.6;">Resgates e reabilitações completas previstas para este ano.</span>
+                            </li>
+                            <li style="margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px;">
+                                <span style="display:block; font-size:1.5rem; font-weight:900;">100% Condenações</span>
+                                <span style="font-size:0.8rem; opacity:0.6;">Meta de eficácia jurídica em todos os casos de denúncia protocolada.</span>
+                            </li>
+                            <li>
+                                <span style="display:block; font-size:1.5rem; font-weight:900;">Base Móvel IA</span>
+                                <span style="font-size:0.8rem; opacity:0.6;">Implementação de unidades de triagem rápida com inteligência artificial.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adocao" class="adoption-section">
+        <div class="container">
+            <div style="text-align:center; margin-bottom:60px;" data-aos="fade-up">
+                <h4 style="color:var(--p-gold); font-weight:800; letter-spacing:3px;">ADOÇÃO TÁTICA</h4>
+                <h2 style="font-family:'Montserrat'; font-size: 3rem;">Vidas Aguardando um Lar</h2>
+            </div>
+
+            <div class="pet-grid">
+                <div class="pet-card" data-aos="fade-up">
+                    <div class="pet-tag">RESGATADO</div>
+                    <img src="/image/Amora.png"class="pet-img">
+                
+                    <div class="pet-info">
+                        <h3>Apolo (Pitbull)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Vítima de abandono em Resende. Hoje está 100% reabilitado, castrado e dócil.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Apolo')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pet-tag">URGENTE</div>
+                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600" class="pet-img">
+                    <div class="pet-info">
+                        <h3>Luna (Felino)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Resgatada de cativeiro insalubre. Extremamente carinhosa, busca lar calmo.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Luna')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pet-tag">REABILITADO</div>
+                    <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600" class="pet-img">
+                    <div class="pet-info">
+                        <h3>Thor (Pastor Alemão)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Ex-cão de guarda descartado. Inteligente, protetor e fiel.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Thor')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="noticias" class="container news-section">
+        <h2 style="font-family:'Montserrat'; text-align:center; margin-bottom:50px;">Relatórios de Inteligência</h2>
+        <div class="pet-grid">
+            <div class="news-card" data-aos="fade-up">
+                <img src="/image/Luna.png" style="width:100%; height:180px; object-fit:cover;">
+                <div style="padding:20px;">
+                    <span class="badge badge-happy">Sucesso</span>
+                    <h4>Justiça condena agressor em Resende</h4>
+                    <p style="font-size:0.75rem; color:#666;">Pela primeira vez, o corpo jurídico do Guard Pets consegue pena máxima para crime de maus-tratos.</p>
+                </div>
+            </div>
+            <div class="news-card" data-aos="fade-up" data-aos-delay="100">
+                <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=600" style="width:100%; height:180px; object-fit:cover;">
+                <div style="padding:20px;">
+                    <span class="badge badge-sad">Alerta</span>
+                    <h4>Surto de Cinomose na Região</h4>
+                    <p style="font-size:0.75rem; color:#666;">Notícia triste: Novo surto detectado. Iniciamos campanha de vacinação gratuita emergencial.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   <section id="denuncia" class="container" style="padding-bottom:100px;">
+    <div class="denuncia-box">
+        <h2 style="font-family:'Montserrat'; margin-bottom:30px;">Protocolo de Denúncia Sigilosa</h2>
+        <form id="form-denuncia">
+            <div class="form-grid">
+                <input type="text" id="denuncia-nome" placeholder="Seu Nome (Opcional)">
+                <input type="text" id="denuncia-local" class="check-denuncia" placeholder="Localização do Crime" required>
+            </div>
+            <select id="denuncia-tipo">
+                <option>Tipo: Agressão Física</option>
+                <option>Tipo: Abandono</option>
+                <option>Tipo: Envenenamento</option>
+            </select>
+            <textarea id="denuncia-relato" class="check-denuncia" rows="5" placeholder="Relate o ocorrido com detalhes..." required></textarea>
+            
+            <button type="submit" id="btn-denuncia" class="btn-full" style="background:var(--danger); opacity:0.5;" disabled>ENVIAR PARA O COMANDO</button>
+        </form>
+
+        <!-- ==============================================
+             [OBSERVER] — Área de Status de Ocorrências
+             Atualizada automaticamente quando o status
+             de uma ocorrência muda (padrão Observer).
+        ============================================== -->
+        <div class="status-ocorrencias-wrapper">
+            <div class="status-ocorrencias-header">
+                <h4><i class="fas fa-satellite-dish"></i> Monitor de Resgates</h4>
+                <p>Acompanhe o status das ocorrências registradas em tempo real.</p>
+            </div>
+
+            <!-- Área preenchida dinamicamente pelo Observer -->
+            <div id="area-status-ocorrencias" class="area-status">
+                <p class="status-vazio">Nenhuma ocorrência registrada ainda.<br>Envie uma denúncia para começar.</p>
+            </div>
+
+            <!-- Botão de demonstração do Observer -->
+            <button id="btn-demo-status" class="btn-demo-observer" title="Demonstra o padrão Observer atualizando o status da última ocorrência">
+                <i class="fas fa-play-circle"></i>
+                Simular Atualização de Status
+                <span class="btn-demo-badge">Observer</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+    <div class="auth-overlay" id="auth-modal">
+        <div class="auth-card">
+            <div class="close-auth" onclick="toggleAuth(false)"><i class="fas fa-times"></i></div>
+            
+            <div class="auth-side-info">
+                <h2 style="font-family:'Montserrat'; margin-bottom:20px;">Portal de <br><span style="color:var(--p-gold)">Agentes.</span></h2>
+                <p style="font-size:0.8rem; opacity:0.7;">Acesso restrito para advogados, veterinários e equipe de resgate tático credenciada.</p>
+            </div>
+
+            <div class="auth-side-form">
+                <div class="auth-tabs">
+                    <button class="tab-link active" id="tab-login" onclick="switchAuth('login')">LOGIN</button>
+                    <button class="tab-link" id="tab-reg" onclick="switchAuth('reg')">CRIAR CONTA</button>
+                </div>
+
+                <form id="form-login">
+                    <input type="email" placeholder="E-mail de Agente" style="color:#333; background:#f9f9f9;">
+                    <input type="password" placeholder="Chave de Segurança" style="color:#333; background:#f9f9f9;">
+                    <button type="submit" class="btn-full">ACESSAR SISTEMA</button>
+                </form>
+
+                <form id="form-reg" style="display:none;">
+                    <div class="form-grid" style="gap:10px;">
+                        <input type="text" placeholder="Nome" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
+                        <input type="text" placeholder="Sobrenome" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
+                    </div>
+                    <input type="text" placeholder="CPF ou Registro Profissional (OAB/CRMV)" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
+                    <input type="email" placeholder="E-mail para Validação" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
+                    <select style="color:#333; background:#f9f9f9; font-size:0.8rem;">
+                        <option>Especialidade: Advogado</option>
+                        <option>Especialidade: Veterinário</option>
+                        <option>Especialidade: Resgate Tático</option>
+                    </select>
+                    <input type="password" placeholder="Crie sua Senha" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
+                    <button type="submit" class="btn-full" style="background:var(--success)">ENVIAR PARA AUDITORIA</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Guard Pets Global Intelligence - Resende/RJ. Proteção Animal em Nível Militar.</p>
+    </footer>
+ 
+
+
+
+<div class="adopt-overlay" id="adopt-modal">
+    <div class="adopt-card">
+        <div class="close-auth" onclick="toggleAdopt(false)" style="color:#fff; top: 15px; right: 15px;"><i class="fas fa-times"></i></div>
+        
+        <div class="adopt-header">
+            <h3 style="font-family:'Montserrat';">Requisição de Prontuário</h3>
+            <p style="font-size:0.7rem; opacity:0.7; letter-spacing:1px;" id="target-pet-name">ANIMAL: NOME DO PET</p>
+        </div>
+
+        <form class="adopt-body" id="form-adopt">
+            <div style="margin-bottom:15px;">
+                <label>Seu Nome Completo</label>
+                <input type="text" placeholder="Ex: João Silva" required class="check-ready">
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div>
+                    <label>WhatsApp</label>
+                    <input type="text" id="adopt-phone" placeholder="(24) 99999-9999" required class="check-ready">
+                </div>
+                <div>
+                    <label>Tipo de Residência</label>
+                    <select required>
+                        <option value="casa">Casa (Quintal telado)</option>
+                        <option value="apto">Apartamento (Com redes)</option>
+                        <option value="sitio">Sítio/Fazenda</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="margin-bottom:20px;">
+                <label>Por que você deseja adotar este animal?</label>
+                <textarea rows="3" placeholder="Conte brevemente sua experiência com pets..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-full" style="background:var(--p-dark);">SOLICITAR ACESSO AOS DADOS</button>
+            <p style="text-align:center; font-size:0.6rem; color:#999; margin-top:15px;">Ao solicitar, sua ficha passará por análise tática e jurídica.</p>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+    <!-- ===================================================
+         PADRÕES DE DESIGN — carregados ANTES do index1.js
+         Ordem importante: Singleton → Factory → Observer
+    =================================================== -->
+    <!-- [SINGLETON] Instância única do banco de dados -->
+    <script src="js/patterns/singleton.js"></script>
+    <!-- [FACTORY] Centraliza criação de objetos do sistema -->
+    <script src="js/patterns/factory.js"></script>
+    <!-- [OBSERVER] Sistema de notificações por eventos -->
+    <script src="js/patterns/observer.js"></script>
+
+    <!-- Lógica principal (usa os 3 padrões acima) -->
+    <script src="index1.js" defer></script>

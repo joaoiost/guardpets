@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Técnico — Guard Pets Intelligence</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1a2340;
+            line-height: 1.7;
+        }
+        .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1a2340, #2a52be);
+            color: #fff;
+            padding: 40px 32px;
+            border-radius: 12px;
+            margin-bottom: 36px;
+        }
+        header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+        header p  { font-size: 14px; opacity: 0.8; }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 12px;
+            margin-top: 12px;
+            margin-right: 6px;
+        }
+
+        /* Section */
+        section {
+            background: #fff;
+            border-radius: 10px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        }
+        section h2 {
+            font-size: 18px;
+            color: #2a52be;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8edf8;
+        }
+        section h3 { font-size: 15px; color: #1a2340; margin: 16px 0 8px; }
+        p { margin-bottom: 10px; font-size: 14px; }
+        ul, ol { padding-left: 20px; margin-bottom: 10px; font-size: 14px; }
+        li { margin-bottom: 4px; }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+        th {
+            background: #2a52be;
+            color: #fff;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        td { padding: 9px 12px; border-bottom: 1px solid #e8edf8; }
+        tr:nth-child(even) td { background: #f8f9ff; }
+
+        /* Code block */
+        pre {
+            background: #1a2340;
+            color: #a8d8a8;
+            padding: 16px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        code {
+            background: #e8edf8;
+            color: #2a52be;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* Callout */
+        .callout {
+            background: #e8f5e9;
+            border-left: 4px solid #388e3c;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+        .callout.blue { background: #e3f2fd; border-color: #1565c0; }
+        .callout.orange { background: #fff3e0; border-color: #e65100; }
+
+        /* Grid */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+        .card {
+            border: 1px solid #e8edf8;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .card h4 { font-size: 14px; color: #2a52be; margin-bottom: 6px; }
+        .card p  { font-size: 13px; color: #555; margin: 0; }
+
+        /* Pattern badge */
+        .pattern-tag {
+            display: inline-block;
+            background: #2a52be;
+            color: #fff;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            header { padding: 24px 18px; }
+            section { padding: 18px 16px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- HEADER -->
+    <header>
+        <h1>Relatório Técnico — Guard Pets Intelligence</h1>
+        <p>MVP Back-End · API RESTful · Modelo de Dados · Padrões de Design</p>
+        <span class="badge">Node.js</span>
+        <span class="badge">Express</span>
+        <span class="badge">MySQL</span>
+        <span class="badge">JWT</span>
+        <span class="badge">bcrypt</span>
+        <span class="badge">Factory · Singleton · Observer</span>
+    </header>
+
+    <!-- 1. VISÃO GERAL -->
+    <section>
+        <h2>1. Visão Geral do Projeto</h2>
+        <p>
+            O <strong>Guard Pets Intelligence</strong> é uma plataforma web de gerenciamento de resgates e
+            adoções de animais vítimas de maus-tratos. O sistema integra uma equipe multidisciplinar formada
+            por advogados, veterinários e especialistas em resgate tático, permitindo:
+        </p>
+        <ul>
+            <li>Recepção e rastreamento de denúncias de maus-tratos;</li>
+            <li>Gerenciamento do ciclo de vida de animais resgatados;</li>
+            <li>Processo de agendamento de adoções;</li>
+            <li>Cadastro e autenticação segura de agentes.</li>
+        </ul>
+        <div class="callout">
+            <strong>Stack principal:</strong> Frontend em HTML5 / CSS3 / JavaScript vanilla;
+            Backend em Node.js com Express; Banco de dados MySQL; Autenticação via JWT + bcrypt.
+        </div>
+    </section>
+
+    <!-- 2. ARQUITETURA -->
+    <section>
+        <h2>2. Arquitetura do Sistema</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h4>Frontend (Cliente)</h4>
+                <p>HTML5, CSS3 (Glassmorphism), JavaScript ES2022. Comunica com o backend via fetch API (JSON). Padrões de design implementados no lado do cliente.</p>
+            </div>
+            <div class="card">
+                <h4>Backend (Servidor)</h4>
+                <p>Node.js + Express. API RESTful com endpoints para autenticação, CRUD de usuários, denúncias e ocorrências. Porta padrão: 3000.</p>
+            </div>
+            <div class="card">
+                <h4>Banco de Dados</h4>
+                <p>MySQL (WAMP/localhost). Tabelas: <code>usuarios</code>, <code>animais</code>, <code>ocorrencias</code>, <code>agendamentos</code>. Script em <code>database.sql</code>.</p>
+            </div>
+            <div class="card">
+                <h4>Segurança</h4>
+                <p>Senhas criptografadas com <strong>bcryptjs</strong> (salt 10). Sessões autenticadas com <strong>JSON Web Token</strong> (expiração em 8h). Rotas protegidas por middleware JWT.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. API REST -->
+    <section>
+        <h2>3. API RESTful — Endpoints</h2>
+        <h3>Autenticação</h3>
+        <table>
+            <tr><th>Método</th><th>Rota</th><th>Descrição</th><th>Auth</th></tr>
+            <tr><td>POST</td><td>/register</td><td>Cadastro de usuário (senha hasheada)</td><td>Público</td></tr>
+            <tr><td>POST</td><td>/login</td><td>Autenticação e retorno do token JWT</td><td>Público</td></tr>
+        </table>
+
+        <h3>CRUD de Usuários</h3>
+        <table>
+            <tr><th>Método</th><th>Rota</th><th>Descrição</th><th>Auth</th></tr>
+            <tr><td>GET</td><td>/usuarios</td><td>Listar todos os usuários</td><td>JWT</td></tr>
+            <tr><td>GET</td><td>/usuarios/:id</td><td>Buscar usuário por ID</td><td>JWT</td></tr>
+            <tr><td>PUT</td><td>/usuarios/:id</td><td>Atualizar dados do usuário</td><td>JWT</td></tr>
+            <tr><td>DELETE</td><td>/usuarios/:id</td><td>Remover usuário</td><td>JWT</td></tr>
+        </table>
+
+        <h3>Ocorrências</h3>
+        <table>
+            <tr><th>Método</th><th>Rota</th><th>Descrição</th><th>Auth</th></tr>
+            <tr><td>POST</td><td>/denuncia</td><td>Registrar denúncia / ocorrência</td><td>Público</td></tr>
+            <tr><td>GET</td><td>/ocorrencias</td><td>Listar todas as ocorrências</td><td>JWT</td></tr>
+            <tr><td>PUT</td><td>/ocorrencias/:id/status</td><td>Atualizar status da ocorrência</td><td>JWT</td></tr>
+        </table>
+
+        <div class="callout blue">
+            <strong>Autenticação:</strong> rotas protegidas exigem o header
+            <code>Authorization: Bearer &lt;token&gt;</code>. O token é gerado no login com validade de 8 horas.
+        </div>
+
+        <h3>Exemplo de Requisição — Login</h3>
+        <pre>POST /login
+Content-Type: application/json
+
+{
+  "email": "agente@guardpets.com",
+  "senha": "minha_senha_segura"
+}
+
+// Resposta 200:
+{
+  "message": "Login realizado com sucesso!",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "usuario": { "id": 1, "nome": "João", "tipo": "usuario" }
+}</pre>
+    </section>
+
+    <!-- 4. MODELO DE DADOS -->
+    <section>
+        <h2>4. Modelo de Dados (MER)</h2>
+        <p>O banco de dados <code>guard_pets</code> é composto por quatro entidades. As formas normais
+        1FN, 2FN e 3FN foram aplicadas em todas as tabelas.</p>
+
+        <h3>Entidades e Atributos</h3>
+        <table>
+            <tr><th>Tabela</th><th>PK</th><th>Campos Principais</th><th>Restrições Notáveis</th></tr>
+            <tr>
+                <td><strong>usuarios</strong></td>
+                <td>id (AI)</td>
+                <td>nome, email, cpf, senha (hash), especialidade, tipo, ativo</td>
+                <td>UQ: email, cpf · NOT NULL: nome, email, senha</td>
+            </tr>
+            <tr>
+                <td><strong>animais</strong></td>
+                <td>id (AI)</td>
+                <td>nome, especie, raca, status (ENUM), castrado, vacinado, disponivel_adocao</td>
+                <td>ENUM status · NOT NULL: nome, especie, status</td>
+            </tr>
+            <tr>
+                <td><strong>ocorrencias</strong></td>
+                <td>id (AI)</td>
+                <td>protocolo, tipo, localizacao, relato, nome_denunciante, status (ENUM)</td>
+                <td>UQ: protocolo · ENUM status · ON UPDATE: atualizado_em</td>
+            </tr>
+            <tr>
+                <td><strong>agendamentos</strong></td>
+                <td>id (AI)</td>
+                <td>protocolo, nome_adotante, telefone, motivacao, animal_id (FK), status</td>
+                <td>UQ: protocolo · FK → animais(id) ON DELETE SET NULL</td>
+            </tr>
+        </table>
+
+        <h3>Relacionamentos</h3>
+        <table>
+            <tr><th>Tabela Origem</th><th>FK</th><th>Tabela Referenciada</th><th>Cardinalidade</th><th>On Delete</th></tr>
+            <tr>
+                <td>agendamentos</td>
+                <td>animal_id</td>
+                <td>animais(id)</td>
+                <td>N : 1</td>
+                <td>SET NULL</td>
+            </tr>
+        </table>
+
+        <h3>Formas Normais</h3>
+        <ul>
+            <li><strong>1FN:</strong> todos os campos são atômicos — sem grupos repetidos ou arrays.</li>
+            <li><strong>2FN:</strong> todas as PKs são simples (AUTO_INCREMENT) — sem dependências parciais.</li>
+            <li><strong>3FN:</strong> nenhum atributo não-chave depende transitivamente de outro — ex.: o telefone do adotante depende apenas do id do agendamento, não do animal.</li>
+        </ul>
+        <div class="callout orange">
+            O script completo com CREATE TABLE, PKs, FKs, ENUMs e dados iniciais está em
+            <code>database.sql</code>. Execute no MySQL antes de iniciar o servidor.
+        </div>
+    </section>
+
+    <!-- 5. PADRÕES DE DESIGN -->
+    <section>
+        <h2>5. Padrões de Design</h2>
+
+        <h3>Factory <span class="pattern-tag">factory.js</span></h3>
+        <p>
+            A classe <code>EntidadeFactory</code> centraliza a criação de todos os objetos do sistema.
+            Em vez de criar objetos manualmente em vários pontos do código, todos passam por
+            <code>EntidadeFactory.criar&lt;Tipo&gt;()</code>. Isso garante estrutura consistente e
+            facilita alterações futuras.
+        </p>
+        <p><strong>Objetos criados:</strong> Usuário, Administrador, Animal, Ocorrência, Agendamento.</p>
+
+        <h3>Singleton <span class="pattern-tag">singleton.js</span></h3>
+        <p>
+            A classe <code>BancoDeDados</code> garante uma única instância do gerenciador de dados
+            em toda a aplicação (lado cliente). Qualquer módulo que precise de dados usa
+            <code>BancoDeDados.getInstance()</code>, evitando múltiplas cópias desincronizadas.
+        </p>
+        <p><strong>Responsabilidades:</strong> persistência em localStorage, CRUD em memória, inicialização de dados padrão.</p>
+
+        <h3>Observer <span class="pattern-tag">observer.js</span></h3>
+        <p>
+            O <code>GerenciadorEventos</code> implementa o padrão pub/sub: qualquer parte do sistema
+            pode se inscrever em eventos (<code>inscrever</code>) e será notificada automaticamente
+            quando ocorrerem (<code>notificar</code>).
+        </p>
+        <p><strong>Eventos monitorados:</strong> nova ocorrência, novo usuário, novo agendamento, atualização de status.</p>
+        <p><strong>Resultado visual:</strong> sistema de toasts (notificações) disparado automaticamente a cada mudança de estado.</p>
+    </section>
+
+    <!-- 6. DEPLOY -->
+    <section>
+        <h2>6. Deploy e Hospedagem</h2>
+        <p>
+            O frontend estático (pasta <code>page/</code>) está configurado para hospedagem na
+            <strong>Vercel</strong> via <code>vercel.json</code>. Para o backend com MySQL, recomenda-se
+            utilizar <strong>Railway</strong> ou <strong>Render</strong>, que suportam aplicações Node.js
+            com banco de dados relacional.
+        </p>
+        <h3>Passos para deploy do frontend (Vercel)</h3>
+        <ol>
+            <li>Faça push do repositório para o GitHub;</li>
+            <li>Importe o projeto em <strong>vercel.com</strong>;</li>
+            <li>O arquivo <code>vercel.json</code> já configura o roteamento para a pasta <code>page/</code>;</li>
+            <li>Clique em <strong>Deploy</strong>.</li>
+        </ol>
+        <h3>Variáveis de Ambiente</h3>
+        <p>Copie <code>.env.example</code> para <code>.env</code> e preencha com os dados reais.
+        No Vercel/Railway, configure as variáveis diretamente no painel do serviço.</p>
+    </section>
+
+    <!-- 7. COMO EXECUTAR -->
+    <section>
+        <h2>7. Como Executar Localmente</h2>
+        <pre># 1. Instalar dependências
+npm install
+
+# 2. Criar o banco de dados (execute o script no MySQL/WAMP)
+#    Abra o phpMyAdmin ou MySQL Workbench e execute: database.sql
+
+# 3. Configurar variáveis de ambiente
+copy .env.example .env
+# edite o .env com usuário e senha do MySQL
+
+# 4. Iniciar o servidor
+npm start
+# Servidor disponível em http://localhost:3000
+
+# 5. Abrir o frontend
+# Abra page/index1.html no navegador</pre>
+    </section>
+
+    <footer style="text-align:center; padding: 20px 0; font-size: 12px; color: #888;">
+        Guard Pets Intelligence &mdash; Relatório Técnico &mdash; 2026
+    </footer>
+
+</div>
+</body>
+</html>
