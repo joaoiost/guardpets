@@ -31,6 +31,169 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     AOS.init({ duration: 800, once: true });
 
+    // =========================================================
+    //  8. CONTADOR ANIMADO DE IMPACTO
+    // =========================================================
+    const contadores = document.querySelectorAll('.stat-number');
+    if (contadores.length) {
+        const animarContador = (el) => {
+            const alvo = parseInt(el.dataset.target, 10);
+            const duracao = 2000;
+            const passo = Math.ceil(alvo / (duracao / 16));
+            let atual = 0;
+            const timer = setInterval(() => {
+                atual = Math.min(atual + passo, alvo);
+                el.textContent = atual.toLocaleString('pt-BR');
+                if (atual >= alvo) clearInterval(timer);
+            }, 16);
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    animarContador(e.target);
+                    observer.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        contadores.forEach(el => observer.observe(el));
+    }
+
+    // =========================================================
+    //  9. FILTRO DE ADOÇÃO
+    // =========================================================
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filtro = btn.dataset.filter;
+            document.querySelectorAll('#pet-grid .pet-card').forEach(card => {
+                if (filtro === 'all') {
+                    card.classList.remove('hidden');
+                } else if (filtro === 'cachorro' || filtro === 'gato') {
+                    card.classList.toggle('hidden', card.dataset.especie !== filtro);
+                } else {
+                    card.classList.toggle('hidden', card.dataset.tamanho !== filtro);
+                }
+            });
+        });
+    });
+
+    // =========================================================
+    //  10. MÁSCARA TELEFONE VOLUNTÁRIO
+    // =========================================================
+    const elVolPhone = document.getElementById('voluntario-phone');
+    if (elVolPhone) IMask(elVolPhone, { mask: '(00) 00000-0000' });
+
+    // =========================================================
+    //  11. FORMULÁRIO DE VOLUNTARIADO
+    // =========================================================
+    const formVol = document.getElementById('form-voluntario');
+    if (formVol) {
+        formVol.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = formVol.querySelector('button[type="submit"]');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
+            btn.disabled = true;
+            await new Promise(r => setTimeout(r, 1200));
+            Swal.fire({
+                title: 'CADASTRO RECEBIDO!',
+                html: 'Obrigado por querer fazer parte do Guard Pets!<br>Nossa equipe entrará em contato em breve.',
+                icon: 'success',
+                confirmButtonColor: '#c5a666',
+            });
+            formVol.reset();
+            btn.innerHTML = orig;
+            btn.disabled = false;
+        });
+    }
+
+    // =========================================================
+    //  12. RASTREAMENTO DE PROTOCOLO
+    // =========================================================
+    window.rastrearProtocolo = () => {
+        const input = document.getElementById('input-protocolo');
+        const resultado = document.getElementById('resultado-rastreamento');
+        if (!input || !resultado) return;
+
+        const protocolo = input.value.trim().toUpperCase();
+        if (!protocolo || protocolo.length < 5) {
+            Swal.fire('Atenção', 'Digite um protocolo válido (ex: GP-123456)', 'warning');
+            return;
+        }
+
+        const ocorrencias = BancoDeDados.getInstance().getOcorrencias();
+        const oc = ocorrencias.find(o => o.protocolo === protocolo);
+
+        resultado.style.display = 'block';
+
+        const statusLabels = {
+            'Registrado': { cor: 'rgba(255,255,255,0.2)', texto: '📋 Registrado — aguardando triagem' },
+            'Em Análise': { cor: '#3498db', texto: '🔍 Em Análise — equipe avaliando' },
+            'Equipe Acionada': { cor: '#f39c12', texto: '🚨 Equipe Acionada — resgate em andamento' },
+            'Resgatado': { cor: '#27ae60', texto: '✅ Animal Resgatado com sucesso!' },
+            'Encaminhado para Adoção': { cor: '#c5a666', texto: '🏠 Encaminhado para Adoção' },
+        };
+
+        if (!oc) {
+            resultado.innerHTML = `
+                <p class="resultado-protocolo">PROTOCOLO: ${protocolo}</p>
+                <p style="color:#e74c3c; font-weight:700;">Protocolo não encontrado.</p>
+                <p style="font-size:0.8rem; opacity:0.6; margin-top:8px;">Verifique o número e tente novamente.</p>
+            `;
+            return;
+        }
+
+        const info = statusLabels[oc.status] || { cor: '#fff', texto: oc.status };
+        resultado.innerHTML = `
+            <p class="resultado-protocolo">PROTOCOLO: ${oc.protocolo}</p>
+            <p class="resultado-tipo">${oc.tipo}</p>
+            <p class="resultado-local"><i class="fas fa-map-marker-alt"></i> ${oc.localizacao}</p>
+            <div style="background:${info.cor}22; border:1px solid ${info.cor}55; border-radius:10px; padding:12px 18px; display:inline-block;">
+                <span style="font-weight:700; color:${info.cor}; font-size:0.9rem;">${info.texto}</span>
+            </div>
+            <p style="font-size:0.7rem; opacity:0.4; margin-top:15px;">Registrado em: ${new Date(oc.criadoEm || oc.id).toLocaleDateString('pt-BR')}</p>
+        `;
+    };
+
+    // =========================================================
+    //  13. MAPA DE OCORRÊNCIAS (Leaflet.js)
+    // =========================================================
+    const mapaEl = document.getElementById('mapa-leaflet');
+    if (mapaEl && window.L) {
+        const mapa = L.map('mapa-leaflet', { zoomControl: true }).setView([-22.4634, -44.4500], 12);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            maxZoom: 18,
+        }).addTo(mapa);
+
+        const icone = L.divIcon({
+            html: '<div style="background:#e74c3c; width:14px; height:14px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 8px rgba(231,76,60,0.8);"></div>',
+            className: '',
+            iconSize: [14, 14],
+        });
+
+        // Marcadores de demonstração
+        const pontos = [
+            { lat: -22.4634, lng: -44.4500, tipo: 'Agressão Física', bairro: 'Centro, Resende' },
+            { lat: -22.4780, lng: -44.4620, tipo: 'Abandono', bairro: 'Jardim Primavera, Resende' },
+            { lat: -22.4510, lng: -44.4380, tipo: 'Envenenamento', bairro: 'Vila Isabel, Resende' },
+            { lat: -22.5120, lng: -44.1050, tipo: 'Abandono', bairro: 'Volta Redonda' },
+            { lat: -22.4020, lng: -44.5680, tipo: 'Agressão Física', bairro: 'Itatiaia' },
+        ];
+
+        // Adicionar ocorrências reais do localStorage
+        const ocorrs = BancoDeDados.getInstance().getOcorrencias();
+
+        pontos.forEach(p => {
+            L.marker([p.lat, p.lng], { icon: icone })
+                .addTo(mapa)
+                .bindPopup(`<b style="color:#e74c3c">${p.tipo}</b><br><small>${p.bairro}</small>`);
+        });
+    }
+
+});
+
     // Header Scroll
     window.addEventListener('scroll', () => {
         const header = document.getElementById('main-header');
