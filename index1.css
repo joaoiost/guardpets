@@ -121,6 +121,19 @@
         .btn-full:hover { background: var(--p-gold); color: var(--p-dark); }
 
         footer { background: #000; color: #fff; padding: 60px 0; text-align: center; font-size: 0.8rem; opacity: 0.6; }
+        .footer-social { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+        .footer-social a img { width: 24px; height: 24px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.6; transition: opacity 0.3s; }
+        .footer-social a:hover img { opacity: 1; }
+
+        /* HAMBURGER */
+        .hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 5px; z-index: 2100; }
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .nav-wrapper { flex-wrap: wrap; position: relative; }
+            #nav-menu { display: none; flex-direction: column; width: 100%; background: rgba(10,11,12,0.97); padding: 20px; gap: 18px; border-top: 1px solid rgba(197,166,102,0.2); }
+            #nav-menu.open { display: flex; }
+            .nav-links a, .nav-links .btn-agent { width: 100%; text-align: center; }
+        }
 
         @media (max-width: 1024px) {
             .manifesto-grid { grid-template-columns: 1fr; gap: 40px; }

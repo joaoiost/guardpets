@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guard Pets | Intelligence, Rescue & Welfare</title>
-    
+    <link rel="icon" type="image/png" href="/image/ICON.png">
+
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -19,7 +20,10 @@
     <header id="main-header">
         <div class="container nav-wrapper">
             <a href="#" class="logo">GUARD<span>PETS</span></a>
-            <nav class="nav-links">
+            <button class="hamburger" id="hamburger-btn" aria-label="Menu" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-links" id="nav-menu">
                 <a href="#sobre">Quem Somos</a>
                 <a href="#noticias">Inteligência</a>
                 <a href="#adocao">Adoção</a>
@@ -97,8 +101,8 @@
             <div class="pet-grid">
                 <div class="pet-card" data-aos="fade-up">
                     <div class="pet-tag">RESGATADO</div>
-                    <img src="/image/Amora.png"class="pet-img">
-                
+                    <img src="/image/Bob.png" class="pet-img">
+
                     <div class="pet-info">
                         <h3>Apolo (Pitbull)</h3>
                         <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Vítima de abandono em Resende. Hoje está 100% reabilitado, castrado e dócil.</p>
@@ -158,9 +162,9 @@
                 <input type="text" id="denuncia-local" class="check-denuncia" placeholder="Localização do Crime" required>
             </div>
             <select id="denuncia-tipo">
-                <option>Tipo: Agressão Física</option>
-                <option>Tipo: Abandono</option>
-                <option>Tipo: Envenenamento</option>
+                <option value="Agressão Física">Tipo: Agressão Física</option>
+                <option value="Abandono">Tipo: Abandono</option>
+                <option value="Envenenamento">Tipo: Envenenamento</option>
             </select>
             <textarea id="denuncia-relato" class="check-denuncia" rows="5" placeholder="Relate o ocorrido com detalhes..." required></textarea>
             
@@ -224,6 +228,7 @@
                         <input type="text" name="sobrenome" placeholder="Sobrenome" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                     </div>
                     <input type="text" name="cpf" placeholder="CPF ou Registro Profissional (OAB/CRMV)" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
+                    <input type="text" name="telefone" placeholder="WhatsApp / Telefone" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                     <input type="email" name="email" placeholder="E-mail para Validação" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                     <select name="especialidade" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                         <option value="Advogado">Especialidade: Advogado</option>

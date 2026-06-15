@@ -59,6 +59,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     //  3. FUNÇÕES AUXILIARES DE UI — mantidas do código original
     // =========================================================
+    window.toggleMenu = () => {
+        const nav = document.getElementById('nav-menu');
+        const btn = document.getElementById('hamburger-btn');
+        if (!nav) return;
+        const open = nav.classList.toggle('open');
+        btn.innerHTML = open ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+    };
+
+    // Fecha o menu ao clicar em um link
+    document.querySelectorAll('#nav-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            document.getElementById('nav-menu')?.classList.remove('open');
+            const btn = document.getElementById('hamburger-btn');
+            if (btn) btn.innerHTML = '<i class="fas fa-bars"></i>';
+        });
+    });
+
     window.toggleAuth = (show) => {
         const modal = document.getElementById('auth-modal');
         modal.classList.toggle('active', show);
@@ -145,9 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled  = true;
 
             try {
-                // Simula delay de rede (manter comportamento original)
-                await new Promise(res => setTimeout(res, 1500));
-
                 // [FACTORY] — Cria objeto de ocorrência padronizado
                 const ocorrencia = EntidadeFactory.criarOcorrencia({
                     nome:        document.getElementById('denuncia-nome')?.value || 'Anônimo',
@@ -155,6 +169,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     tipo:        document.getElementById('denuncia-tipo')?.value  || 'Agressão Física',
                     relato:      document.getElementById('denuncia-relato')?.value || '',
                 });
+
+                // Envia ao backend (não bloqueia se falhar — salva localmente de qualquer forma)
+                try {
+                    await fetch('/denuncia', {
+                        method:  'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body:    JSON.stringify({
+                            nome:        ocorrencia.nome,
+                            localizacao: ocorrencia.localizacao,
+                            tipo:        ocorrencia.tipo,
+                            relato:      ocorrencia.relato,
+                        }),
+                    });
+                } catch (_) { /* backend indisponível, continua offline */ }
 
                 // [SINGLETON] — Persiste no localStorage via instância única
                 db.adicionarOcorrencia(ocorrencia);

@@ -6,10 +6,25 @@ const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
 
 const app        = express();
-const PORT       = process.env.PORT       || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'guardpets_secret_key_mude_em_producao';
+const PORT       = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'guardpets_secret_dev_only';
 
-app.use(cors());
+if (!process.env.JWT_SECRET) {
+    console.warn('[AVISO] JWT_SECRET não definido — usando chave temporária. Configure no ambiente de produção.');
+}
+
+// Permite mesma origem e domínios .vercel.app por padrão
+const corsOriginExtra = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
+app.use(cors({
+    origin: (origin, cb) => {
+        if (!origin) return cb(null, true); // chamadas server-side / curl
+        if (/\.vercel\.app$/.test(origin)) return cb(null, true);
+        if (origin === 'http://localhost:3000') return cb(null, true);
+        if (corsOriginExtra.includes(origin)) return cb(null, true);
+        cb(new Error('CORS: origem não permitida'));
+    },
+    credentials: true,
+}));
 app.use(express.json());
 
 // Banco de dados (Supabase)
@@ -35,6 +50,7 @@ function autenticar(req, res, next) {
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.status(401).json({ error: 'Token não fornecido' });
 
+    if (!JWT_SECRET) return res.status(500).json({ error: 'Servidor não configurado' });
     jwt.verify(token, JWT_SECRET, (err, payload) => {
         if (err) return res.status(403).json({ error: 'Token inválido ou expirado' });
         req.usuario = payload;
@@ -81,6 +97,7 @@ app.post('/login', async (req, res) => {
         const ok = await bcrypt.compare(senha, usuario.senha);
         if (!ok) return res.status(401).json({ error: 'Credenciais inválidas' });
 
+        if (!JWT_SECRET) return res.status(500).json({ error: 'Servidor não configurado' });
         const token = jwt.sign(
             { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
             JWT_SECRET, { expiresIn: '8h' }
@@ -131,8 +148,11 @@ app.put('/usuarios/:id', autenticar, async (req, res) => {
 });
 
 app.delete('/usuarios/:id', autenticar, async (req, res) => {
+    const alvo = parseInt(req.params.id, 10);
+    if (req.usuario.id !== alvo && req.usuario.tipo !== 'admin')
+        return res.status(403).json({ error: 'Sem permissão para remover este usuário' });
     try {
-        const r = await db.query('DELETE FROM usuarios WHERE id=$1', [req.params.id]);
+        const r = await db.query('DELETE FROM usuarios WHERE id=$1', [alvo]);
         if (!r.rowCount) return res.status(404).json({ error: 'Usuário não encontrado' });
         res.json({ message: 'Usuário removido!' });
     } catch (err) { res.status(500).json({ error: err.message }); }
