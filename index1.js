@@ -849,64 +849,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // =========================================================
-    //  QUIZ PET IDEAL
-    // =========================================================
-    const quizRespostas = {};
-
-    document.querySelectorAll('.quiz-op').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const q = parseInt(btn.dataset.q);
-            quizRespostas[q] = btn.dataset.v;
-
-            const fill = document.getElementById('quiz-progress-fill');
-            if (fill) fill.style.width = (q / 3 * 100) + '%';
-
-            if (q < 3) {
-                document.querySelector(`.quiz-pergunta[data-q="${q}"]`).classList.remove('active');
-                document.querySelector(`.quiz-pergunta[data-q="${q+1}"]`).classList.add('active');
-            } else {
-                mostrarResultadoQuiz();
-            }
-        });
-    });
-
-    function mostrarResultadoQuiz() {
-        document.querySelectorAll('.quiz-pergunta').forEach(p => p.classList.remove('active'));
-        document.getElementById('quiz-resultado').style.display = 'block';
-        if (document.getElementById('quiz-progress-fill'))
-            document.getElementById('quiz-progress-fill').style.width = '100%';
-
-        const { 1: moradia, 2: estilo, 3: exp } = quizRespostas;
-        let emoji, nome, desc;
-
-        if (estilo === 'tranquilo' || moradia === 'apto') {
-            emoji = '🐱'; nome = 'Um gato independente é ideal para você!';
-            desc = 'Gatos se adaptam muito bem a apartamentos e pessoas mais tranquilas. Luna e Mia estão esperando por você!';
-        } else if (estilo === 'ativo' && (moradia === 'casa' || moradia === 'sitio')) {
-            emoji = '🐕'; nome = 'Um cachorro de grande porte combina com você!';
-            desc = 'Com sua energia e espaço, Ravi, Thor ou Bruce seriam companheiros perfeitos para aventuras!';
-        } else if (exp === 'nao' || exp === 'pouca') {
-            emoji = '🐶'; nome = 'Um cachorro de pequeno porte é perfeito!';
-            desc = 'Para quem está começando, Nina ou Amora são dóceis, fáceis de cuidar e cheias de amor para dar!';
-        } else {
-            emoji = '🐾'; nome = 'Você está pronto para qualquer pet!';
-            desc = 'Com sua experiência e espaço, todos os nossos animais teriam um lar incrível com você!';
-        }
-
-        document.getElementById('quiz-pet-emoji').textContent = emoji;
-        document.getElementById('quiz-pet-nome').textContent = nome;
-        document.getElementById('quiz-pet-desc').textContent = desc;
-    }
-
-    window.reiniciarQuiz = () => {
-        Object.keys(quizRespostas).forEach(k => delete quizRespostas[k]);
-        document.getElementById('quiz-resultado').style.display = 'none';
-        document.querySelectorAll('.quiz-pergunta').forEach(p => p.classList.remove('active'));
-        document.querySelector('.quiz-pergunta[data-q="1"]').classList.add('active');
-        if (document.getElementById('quiz-progress-fill'))
-            document.getElementById('quiz-progress-fill').style.width = '0%';
-    };
 
 
 });
