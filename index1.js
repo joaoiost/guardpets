@@ -72,7 +72,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     //  1. CONFIGURAÇÕES INICIAIS
     // =========================================================
-    AOS.init({ duration: 800, once: true });
+    AOS.init({ duration: 900, once: true, easing: 'ease-out-cubic', offset: 60 });
+
+    // Header glassmorphism no scroll
+    const header = document.querySelector('header');
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        if (header) header.classList.toggle('scrolled', y > 50);
+        // Esconde header ao rolar pra baixo rápido, mostra ao subir
+        if (y > 200 && y > lastScroll + 10) header?.classList.add('header-hidden');
+        else if (y < lastScroll - 5) header?.classList.remove('header-hidden');
+        lastScroll = y;
+    }, { passive: true });
+
+    // Lazy load gracioso nas imagens
+    document.querySelectorAll('img').forEach(img => {
+        if (img.complete) { img.classList.add('loaded'); return; }
+        img.addEventListener('load', () => img.classList.add('loaded'));
+        img.setAttribute('loading', 'lazy');
+    });
 
     // =========================================================
     //  8. CONTADOR ANIMADO DE IMPACTO

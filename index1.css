@@ -1975,3 +1975,193 @@ footer { opacity: 1 !important; text-align: left !important; padding: 0 0 30px !
     /* Denuncia box sem margem negativa em telas pequenas */
     .denuncia-box { margin-top: 0 !important; }
 }
+
+/* ==========================================================
+   POLISH PROFISSIONAL — elevação visual completa
+========================================================== */
+
+/* Header hide on scroll down */
+header.header-hidden { transform: translateY(-100%) !important; }
+
+/* Scrollbar premium */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #0a0b0c; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--p-gold), #7a6230); border-radius: 10px; }
+
+/* Seleção de texto dourada */
+::selection { background: rgba(197,166,102,0.25); color: #fff; }
+
+/* Header — transição mais suave */
+header {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+header.scrolled {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 1px 0 rgba(197,166,102,0.2) !important;
+}
+
+/* Botão principal — efeito ripple e hover premium */
+.btn-full {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1) !important;
+    letter-spacing: 1.5px !important;
+}
+.btn-full::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0));
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.btn-full:hover::before { opacity: 1; }
+.btn-full:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important; }
+.btn-full:active { transform: translateY(0) scale(0.98) !important; }
+
+/* Cards de pet — hover profissional */
+.pet-card {
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1),
+                box-shadow 0.35s cubic-bezier(0.4,0,0.2,1),
+                border-color 0.35s !important;
+    border: 1px solid transparent !important;
+}
+.pet-card:hover {
+    transform: translateY(-10px) !important;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2), 0 0 0 1px rgba(197,166,102,0.4) !important;
+    border-color: rgba(197,166,102,0.3) !important;
+}
+.pet-img {
+    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1) !important;
+}
+.pet-card:hover .pet-img { transform: scale(1.06) !important; }
+
+/* Inputs — glow dourado no foco */
+input, select, textarea {
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+input:focus, select:focus, textarea:focus {
+    outline: none !important;
+    border-color: rgba(197,166,102,0.7) !important;
+    box-shadow: 0 0 0 3px rgba(197,166,102,0.1), 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+/* Auth card — entrada suave */
+.auth-card {
+    animation: authCardIn 0.35s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+@keyframes authCardIn {
+    from { opacity:0; transform: scale(0.92) translateY(20px); }
+    to   { opacity:1; transform: scale(1) translateY(0); }
+}
+
+/* Links de nav com underline dourado animado */
+.nav-links a {
+    position: relative;
+}
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0;
+    width: 0; height: 1px;
+    background: var(--p-gold);
+    transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.nav-links a:hover::after { width: 100%; }
+
+/* Stats — linha dourada no topo */
+.stat-item {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s !important;
+}
+.stat-item::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--p-gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.stat-item:hover { transform: translateY(-4px) !important; }
+.stat-item:hover::before { opacity: 1; }
+
+/* Painel do agente — cards com hover */
+.painel-denuncia-card {
+    transition: box-shadow 0.25s, transform 0.25s !important;
+}
+.painel-denuncia-card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Tags dos pets — brilho */
+.pet-tag {
+    letter-spacing: 1.5px !important;
+    font-weight: 800 !important;
+}
+
+/* Seções com transições suaves */
+section { transition: none; }
+
+/* Imagens — carregamento gracioso */
+img {
+    transition: opacity 0.4s ease !important;
+}
+img[loading] { opacity: 0; }
+img.loaded { opacity: 1; }
+
+/* Filter buttons — hover premium */
+.filter-btn {
+    transition: all 0.25s cubic-bezier(0.4,0,0.2,1) !important;
+}
+.filter-btn:hover:not(.active) {
+    background: rgba(197,166,102,0.15) !important;
+    border-color: rgba(197,166,102,0.5) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Patrocinadores hover */
+.patrocinador-logo {
+    transition: all 0.3s ease !important;
+}
+.patrocinador-logo:hover {
+    opacity: 1 !important;
+    filter: brightness(1.2) !important;
+    transform: scale(1.05) !important;
+}
+
+/* WhatsApp float pulse */
+.whatsapp-float {
+    animation: waPulse 2.5s ease-in-out infinite !important;
+}
+@keyframes waPulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.4); }
+    50% { box-shadow: 0 4px 30px rgba(37,211,102,0.7); }
+}
+
+/* Dropdown perfil — entrada mais suave */
+.perfil-dropdown-card {
+    animation: pdIn 0.2s cubic-bezier(0.34,1.2,0.64,1) !important;
+}
+@keyframes pdIn {
+    from { opacity:0; transform:translateY(-6px) scale(0.97); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* Seção de sucessos / castração — hover nas fotos */
+.sucesso-card, .castracao-card {
+    transition: transform 0.3s, box-shadow 0.3s !important;
+}
+.sucesso-card:hover, .castracao-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2) !important;
+}
+
+/* Toast notification — entrada lateral */
+.toast-notification {
+    animation: toastIn 0.4s cubic-bezier(0.34,1.2,0.64,1) !important;
+}
+@keyframes toastIn {
+    from { opacity:0; transform:translateX(60px); }
+    to   { opacity:1; transform:translateX(0); }
+}
