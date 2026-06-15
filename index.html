@@ -69,7 +69,10 @@
                 </div>
             </div>
             <div class="pd-overlay" id="pd-overlay" onclick="togglePerfilDropdown(false)" style="display:none;"></div>
-            <button id="nav-btn-portal" onclick="toggleAuth(true)" class="nav-links btn-agent" style="border:none; cursor:pointer;">PORTAL DO AGENTE</button>
+            <div id="nav-auth-buttons" style="display:flex; align-items:center; gap:10px;">
+                <button onclick="switchAuth('reg'); toggleAuth(true);" class="nav-links" style="border:1px solid rgba(197,166,102,0.5); cursor:pointer; background:none; color:var(--p-gold); font-size:0.72rem; font-weight:700; letter-spacing:1px; padding:8px 16px; border-radius:6px;">CRIAR CONTA</button>
+                <button id="nav-btn-portal" onclick="toggleAuth(true)" class="nav-links btn-agent" style="border:none; cursor:pointer;">LOGIN</button>
+            </div>
         </nav>
     </div>
 </header>
@@ -86,6 +89,7 @@
             <div style="display:flex; gap:20px; flex-wrap:wrap;">
                 <a href="#denuncia" class="btn-full" style="width:auto; padding:20px 40px; text-decoration:none; display:inline-block;">DENUNCIAR CRIME</a>
                 <a href="#adocao" class="btn-full" style="width:auto; padding:20px 40px; background:transparent; border:2px solid #fff; text-decoration:none; display:inline-block;">QUERO ADOTAR</a>
+                <button onclick="switchAuth('reg'); toggleAuth(true);" class="btn-full" style="width:auto; padding:20px 40px; background:var(--p-gold); border:none; cursor:pointer; color:var(--p-dark); font-weight:900; letter-spacing:2px;">CRIAR CONTA</button>
             </div>
         </div>
     </div>

@@ -628,12 +628,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const iniciais = _iniciais(nome);
 
         const wrapper   = document.getElementById('perfil-dropdown-wrapper');
-        const portal    = document.getElementById('nav-btn-portal');
+        const authBtns  = document.getElementById('nav-auth-buttons');
         const nomeNav   = document.getElementById('nav-agente-nome');
         const miniAv    = document.getElementById('perfil-avatar-mini');
 
         if (wrapper)  { wrapper.style.display = 'flex'; }
-        if (portal)   portal.style.display = 'none';
+        if (authBtns) authBtns.style.display = 'none';
         if (nomeNav)  nomeNav.textContent = nome;
         if (miniAv)   miniAv.textContent  = iniciais;
 
@@ -650,10 +650,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function esconderPerfilAgente() {
-        const wrapper = document.getElementById('perfil-dropdown-wrapper');
-        const portal  = document.getElementById('nav-btn-portal');
-        if (wrapper) wrapper.style.display = 'none';
-        if (portal)  portal.style.display  = '';
+        const wrapper   = document.getElementById('perfil-dropdown-wrapper');
+        const authBtns  = document.getElementById('nav-auth-buttons');
+        if (wrapper)  wrapper.style.display  = 'none';
+        if (authBtns) authBtns.style.display = '';
         localStorage.removeItem('gp_usuario');
         localStorage.removeItem('gp_token');
     }
