@@ -1,0 +1,39 @@
+{
+  "name": "GuardPets",
+  "short_name": "GuardPets",
+  "description": "Proteção, adoção e bem-estar animal",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#c5a666",
+  "orientation": "portrait-primary",
+  "lang": "pt-BR",
+  "categories": ["lifestyle", "social"],
+  "icons": [
+    {
+      "src": "/image/ICON.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/image/ICON.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Adotar",
+      "url": "/#adocao",
+      "description": "Ver animais para adoção"
+    },
+    {
+      "name": "Fazer Denúncia",
+      "url": "/#denuncia",
+      "description": "Reportar maus-tratos"
+    }
+  ]
+}

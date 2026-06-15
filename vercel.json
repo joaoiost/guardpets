@@ -14,6 +14,8 @@
           "doacao.html",
           "index1.css",
           "index1.js",
+          "manifest.json",
+          "sw.js",
           "image/**",
           "js/**"
         ]

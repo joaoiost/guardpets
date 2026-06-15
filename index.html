@@ -11,6 +11,11 @@
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#c5a666">
     <link rel="icon" type="image/png" href="/image/ICON.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GuardPets">
+    <link rel="apple-touch-icon" href="/image/ICON.png">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -894,5 +899,12 @@
 <script src="js/patterns/factory.js"></script>
 <script src="js/patterns/observer.js"></script>
 <script src="index1.js" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+}
+</script>
 </body>
 </html>
