@@ -283,7 +283,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.toggleAuth = (show) => {
         const modal = document.getElementById('auth-modal');
-        modal.classList.toggle('active', show);
+        if (!show) {
+            modal.style.opacity = '0';
+            modal.style.transition = 'opacity 0.25s ease';
+            setTimeout(() => {
+                modal.classList.remove('active');
+                modal.style.opacity = '';
+                modal.style.transition = '';
+            }, 250);
+        } else {
+            modal.classList.add('active');
+        }
         document.body.style.overflow = show ? 'hidden' : 'auto';
     };
 
@@ -457,15 +467,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 // [OBSERVER] — Notifica sobre novo usuário
                 GerenciadorEventos.notificar('novo_usuario', { nome, email });
 
-                Swal.fire({
-                    title:             'CONFIRME SEU EMAIL! 📧',
-                    html:              `Enviamos um link de confirmação para <strong>${email}</strong>.<br><br>Verifique sua caixa de entrada (e spam) e clique no link para ativar sua conta.`,
-                    icon:              'success',
-                    confirmButtonColor: '#c5a666',
-                });
-
                 formReg.reset();
                 toggleAuth(false);
+
+                // Se o Supabase retornou sessão direto (confirmação desativada), loga já
+                if (data.access_token) {
+                    localStorage.setItem('gp_supa_token', data.access_token);
+                    mostrarPerfilAgente(data.user || { email, user_metadata: { nome, sobrenome, especialidade } });
+                    GerenciadorEventos.exibirToast('🎖️ Conta Criada!', `Bem-vindo(a), <strong>${nome || email}</strong>!`, 'sucesso');
+                } else {
+                    // Tenta login automático
+                    const login = await supaSignIn(email, senha);
+                    if (login.access_token) {
+                        localStorage.setItem('gp_supa_token', login.access_token);
+                        mostrarPerfilAgente(login.user || { email, user_metadata: { nome, sobrenome, especialidade } });
+                        GerenciadorEventos.exibirToast('🎖️ Conta Criada!', `Bem-vindo(a), <strong>${nome || email}</strong>!`, 'sucesso');
+                    } else {
+                        GerenciadorEventos.exibirToast('✅ Conta criada!', 'Faça login para entrar.', 'sucesso');
+                        setTimeout(() => { switchAuth('login'); toggleAuth(true); }, 800);
+                    }
+                }
 
             } catch (err) {
                 Swal.fire('Erro', 'Não foi possível criar a conta. Verifique sua conexão.', 'error');
