@@ -28,10 +28,11 @@ app.use(cors({
 app.use(express.json());
 
 // Banco de dados (Supabase)
-const db = new Pool({
-    connectionString: process.env.DATABASE_URL || null,
-    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
-});
+const db = new Pool(
+    process.env.DATABASE_URL
+        ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+        : {}
+);
 
 function checarBanco(res) {
     if (!process.env.DATABASE_URL) {
@@ -173,6 +174,7 @@ app.delete('/usuarios/:id', autenticar, async (req, res) => {
 // ============================================================
 
 app.post('/denuncia', async (req, res) => {
+    if (!checarBanco(res)) return;
     const { nome, localizacao, tipo, relato } = req.body;
     const protocolo = `GP-${Date.now().toString().slice(-6)}`;
     try {
@@ -185,6 +187,7 @@ app.post('/denuncia', async (req, res) => {
 });
 
 app.get('/ocorrencias', autenticar, async (req, res) => {
+    if (!checarBanco(res)) return;
     try {
         const r = await db.query('SELECT * FROM ocorrencias ORDER BY criado_em DESC');
         res.json(r.rows);
@@ -192,6 +195,7 @@ app.get('/ocorrencias', autenticar, async (req, res) => {
 });
 
 app.put('/ocorrencias/:id/status', autenticar, async (req, res) => {
+    if (!checarBanco(res)) return;
     try {
         const r = await db.query(
             'UPDATE ocorrencias SET status=$1 WHERE id=$2', [req.body.status, req.params.id]
