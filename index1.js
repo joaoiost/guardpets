@@ -1,11 +1,44 @@
-// ─── Supabase Auth ────────────────────────────────────────────────────────────
+// ─── Supabase Auth (chamadas diretas — sem CDN) ───────────────────────────────
 const _SUPA_URL = 'https://uwlxknmpsurlyljrajbr.supabase.co';
 const _SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3bHhrbm1wc3VybHlqbHJhamJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NDM1MzUsImV4cCI6MjA5NjUxOTUzNX0.o_FnYF843XupwK9xx2KTx7IKdj5S1hHJhKoKE0shBAY';
-let supabaseClient = null;
-try {
-    supabaseClient = supabase.createClient(_SUPA_URL, _SUPA_KEY);
-} catch(e) {
-    console.error('[GuardPets] Supabase não carregou:', e);
+
+const _supaHeaders = { 'apikey': _SUPA_KEY, 'Content-Type': 'application/json' };
+
+async function supaSignUp(email, password, meta) {
+    const r = await fetch(`${_SUPA_URL}/auth/v1/signup`, {
+        method: 'POST',
+        headers: _supaHeaders,
+        body: JSON.stringify({ email, password, data: meta })
+    });
+    return r.json();
+}
+
+async function supaSignIn(email, password) {
+    const r = await fetch(`${_SUPA_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: _supaHeaders,
+        body: JSON.stringify({ email, password })
+    });
+    return r.json();
+}
+
+async function supaSignOut() {
+    const token = localStorage.getItem('gp_supa_token');
+    if (!token) return;
+    await fetch(`${_SUPA_URL}/auth/v1/logout`, {
+        method: 'POST',
+        headers: { ..._supaHeaders, 'Authorization': `Bearer ${token}` }
+    }).catch(() => {});
+    localStorage.removeItem('gp_supa_token');
+    localStorage.removeItem('gp_supa_user');
+}
+
+async function supaGetUser(token) {
+    const r = await fetch(`${_SUPA_URL}/auth/v1/user`, {
+        headers: { ..._supaHeaders, 'Authorization': `Bearer ${token}` }
+    });
+    if (!r.ok) return null;
+    return r.json();
 }
 
 /**
@@ -401,13 +434,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
             btn.disabled  = true;
 
-            if (!supabaseClient) {
-                Swal.fire('Erro', 'Serviço de autenticação não disponível. Recarregue a página (Ctrl+F5).', 'error');
-                btn.innerHTML = textoOriginal;
-                btn.disabled  = false;
-                return;
-            }
-
             try {
                 const nome          = formReg.querySelector('input[name="nome"]')?.value          || '';
                 const sobrenome     = formReg.querySelector('input[name="sobrenome"]')?.value     || '';
@@ -415,17 +441,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const especialidade = formReg.querySelector('select[name="especialidade"]')?.value || 'Agente';
                 const senha         = formReg.querySelector('input[name="senha"]')?.value         || '';
 
-                const { data, error } = await supabaseClient.auth.signUp({
-                    email,
-                    password: senha,
-                    options: {
-                        emailRedirectTo: 'https://guardpets.vercel.app',
-                        data: { nome, sobrenome, especialidade }
-                    }
-                });
+                if (!email || !senha) {
+                    Swal.fire('Atenção', 'Preencha email e senha.', 'warning');
+                    return;
+                }
 
-                if (error) {
-                    Swal.fire('Erro no Cadastro', error.message, 'error');
+                const data = await supaSignUp(email, senha, { nome, sobrenome, especialidade });
+
+                if (data.error || data.msg) {
+                    const msg = data.error?.message || data.msg || 'Erro ao criar conta.';
+                    Swal.fire('Erro no Cadastro', msg, 'error');
                     return;
                 }
 
@@ -443,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleAuth(false);
 
             } catch (err) {
-                Swal.fire('Erro', 'Não foi possível criar a conta.', 'error');
+                Swal.fire('Erro', 'Não foi possível criar a conta. Verifique sua conexão.', 'error');
                 console.error('[App] Erro ao cadastrar usuário:', err);
             } finally {
                 btn.innerHTML = textoOriginal;
@@ -470,23 +495,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const email = formLogin.querySelector('input[name="email"]')?.value || '';
                 const senha = formLogin.querySelector('input[name="senha"]')?.value || '';
 
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: senha });
+                const data = await supaSignIn(email, senha);
 
-                if (error) {
-                    let msg = error.message;
-                    if (msg.includes('Email not confirmed'))
+                if (data.error || !data.access_token) {
+                    const code = data.error?.message || data.error_description || '';
+                    let msg = 'Email ou senha incorretos.';
+                    if (code.includes('Email not confirmed') || code.includes('email_not_confirmed'))
                         msg = 'Email ainda não confirmado. Verifique sua caixa de entrada e clique no link de ativação.';
-                    else if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials'))
-                        msg = 'Email ou senha incorretos.';
                     Swal.fire('Acesso Negado', msg, 'error');
                     return;
                 }
 
-                GerenciadorEventos.exibirToast(
-                    '🎖️ Acesso Concedido',
-                    `Bem-vindo(a) de volta!`,
-                    'sucesso'
-                );
+                localStorage.setItem('gp_supa_token', data.access_token);
+                const user = data.user || {};
+                mostrarPerfilAgente(user);
+
+                GerenciadorEventos.exibirToast('🎖️ Acesso Concedido', 'Bem-vindo(a) de volta!', 'sucesso');
                 toggleAuth(false);
                 formLogin.reset();
 
@@ -615,50 +639,58 @@ document.addEventListener('DOMContentLoaded', () => {
     //  PAINEL DO AGENTE
     // =========================================================
 
-    // ── Supabase: checar sessão existente ao carregar ──────────────────────────
-    supabaseClient.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) mostrarPerfilAgente(session.user);
-    });
-
-    // ── Supabase: ouvir mudanças de estado (login / logout / confirmação) ─────
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-        if (session?.user) {
-            mostrarPerfilAgente(session.user);
-            if (event === 'SIGNED_IN') toggleAuth(false);
-        } else {
-            esconderPerfilAgente();
+    // ── Checar sessão salva ao carregar ──────────────────────────────────────
+    (async () => {
+        // Verifica se voltou de um link de confirmação de email
+        const hash = window.location.hash;
+        if (hash && hash.includes('access_token')) {
+            const params = new URLSearchParams(hash.substring(1));
+            const token  = params.get('access_token');
+            const type   = params.get('type');
+            if (token && (type === 'signup' || type === 'magiclink')) {
+                localStorage.setItem('gp_supa_token', token);
+                history.replaceState(null, '', window.location.pathname);
+                const user = await supaGetUser(token);
+                if (user && user.id) {
+                    mostrarPerfilAgente(user);
+                    Swal.fire({ title: 'Email confirmado!', text: 'Bem-vindo(a) ao GuardPets!', icon: 'success', confirmButtonColor: '#c5a666', timer: 3000, showConfirmButton: false });
+                    return;
+                }
+            }
         }
-    });
+        // Verifica token salvo
+        const token = localStorage.getItem('gp_supa_token');
+        if (token) {
+            const user = await supaGetUser(token);
+            if (user && user.id) mostrarPerfilAgente(user);
+            else { localStorage.removeItem('gp_supa_token'); localStorage.removeItem('gp_supa_user'); }
+        }
+    })();
 
     function _iniciais(nome) {
         return (nome || '?').split(' ').map(p => p[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
     }
 
     function mostrarPerfilAgente(user) {
-        const meta    = user.user_metadata || {};
-        const nome    = meta.nome ? `${meta.nome} ${meta.sobrenome || ''}`.trim() : user.email.split('@')[0];
+        const meta     = user.user_metadata || {};
+        const nome     = meta.nome ? `${meta.nome} ${meta.sobrenome || ''}`.trim() : (user.email || '').split('@')[0];
         const iniciais = _iniciais(nome);
 
-        const wrapper   = document.getElementById('perfil-dropdown-wrapper');
-        const authBtns  = document.getElementById('nav-auth-buttons');
-        const nomeNav   = document.getElementById('nav-agente-nome');
-        const miniAv    = document.getElementById('perfil-avatar-mini');
-
-        if (wrapper)  { wrapper.style.display = 'flex'; }
+        const wrapper  = document.getElementById('perfil-dropdown-wrapper');
+        const authBtns = document.getElementById('nav-auth-buttons');
+        if (wrapper)  wrapper.style.display  = 'flex';
         if (authBtns) authBtns.style.display = 'none';
-        if (nomeNav)  nomeNav.textContent = nome;
-        if (miniAv)   miniAv.textContent  = iniciais;
 
-        const pdAvatar = document.getElementById('pd-avatar');
-        const pdNome   = document.getElementById('pd-nome');
-        const pdEmail  = document.getElementById('pd-email');
-        const pdRole   = document.getElementById('pd-role');
-        if (pdAvatar) pdAvatar.textContent = iniciais;
-        if (pdNome)   pdNome.textContent   = nome;
-        if (pdEmail)  pdEmail.textContent  = user.email;
-        if (pdRole)   pdRole.textContent   = meta.especialidade || 'Agente';
+        const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+        set('nav-agente-nome',   nome);
+        set('perfil-avatar-mini', iniciais);
+        set('pd-avatar', iniciais);
+        set('pd-nome',   nome);
+        set('pd-email',  user.email);
+        set('pd-role',   meta.especialidade || 'Agente');
 
-        localStorage.setItem('gp_usuario', JSON.stringify({ id: user.id, nome, email: user.email }));
+        localStorage.setItem('gp_usuario',    JSON.stringify({ id: user.id, nome, email: user.email }));
+        localStorage.setItem('gp_supa_user',  JSON.stringify(user));
     }
 
     function esconderPerfilAgente() {
@@ -666,8 +698,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const authBtns  = document.getElementById('nav-auth-buttons');
         if (wrapper)  wrapper.style.display  = 'none';
         if (authBtns) authBtns.style.display = '';
-        localStorage.removeItem('gp_usuario');
-        localStorage.removeItem('gp_token');
+        ['gp_usuario', 'gp_token', 'gp_supa_token', 'gp_supa_user'].forEach(k => localStorage.removeItem(k));
     }
 
     window.togglePerfilDropdown = (forceClose) => {
@@ -681,7 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.fazerLogout = async () => {
-        await supabaseClient.auth.signOut();
+        await supaSignOut();
         togglePerfilDropdown(false);
         esconderPerfilAgente();
         GerenciadorEventos.exibirToast('Até logo!', 'Sessão encerrada com sucesso.', 'info');
