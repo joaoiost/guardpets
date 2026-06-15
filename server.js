@@ -33,6 +33,14 @@ const db = new Pool({
     ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
 });
 
+function checarBanco(res) {
+    if (!process.env.DATABASE_URL) {
+        res.status(503).json({ error: 'Banco de dados não configurado. Adicione DATABASE_URL nas variáveis de ambiente.' });
+        return false;
+    }
+    return true;
+}
+
 // ============================================================
 // HEALTH CHECK — útil para verificar se a função está rodando
 // ============================================================
@@ -63,6 +71,7 @@ function autenticar(req, res, next) {
 // ============================================================
 
 app.post('/register', async (req, res) => {
+    if (!checarBanco(res)) return;
     const { nome, sobrenome, cpf, email, telefone, senha, especialidade } = req.body;
     if (!nome || !email || !senha)
         return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
@@ -82,6 +91,7 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
+    if (!checarBanco(res)) return;
     const { email, senha } = req.body;
     if (!email || !senha)
         return res.status(400).json({ error: 'Email e senha são obrigatórios' });

@@ -245,7 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await resp.json();
 
                 if (!resp.ok) {
-                    Swal.fire('Erro', data.error || 'Não foi possível criar a conta.', 'error');
+                    const msg = resp.status === 503
+                        ? 'Banco de dados não conectado. Verifique a configuração do servidor.'
+                        : data.error || 'Não foi possível criar a conta.';
+                    Swal.fire('Erro no Cadastro', msg, 'error');
                     return;
                 }
 
@@ -298,7 +301,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await resp.json();
 
                 if (!resp.ok) {
-                    Swal.fire('Acesso Negado', data.error || 'Credenciais inválidas.', 'error');
+                    const msg = resp.status === 503
+                        ? 'Banco de dados não conectado. Verifique a configuração do servidor.'
+                        : data.error || 'Credenciais inválidas.';
+                    Swal.fire('Acesso Negado', msg, 'error');
                     return;
                 }
 
