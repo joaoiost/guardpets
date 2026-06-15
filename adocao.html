@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resgate, Adoção e Proteção Animal | Guard Pets Intelligence</title>
-    <meta name="description" content="Guard Pets Intelligence — resgate, adoção e proteção animal em Resende/RJ. Denuncie maus-tratos, adote um pet ou seja voluntário.">
-    <meta property="og:title" content="Resgate, Adoção e Proteção Animal | Guard Pets">
-    <meta property="og:description" content="Guard Pets Intelligence — resgate, adoção e proteção animal em Resende/RJ. Denuncie maus-tratos, adote um pet ou seja voluntário.">
+    <title>Adoção Animal | Guard Pets Intelligence</title>
+    <meta name="description" content="Conheça os animais resgatados disponíveis para adoção em Resende/RJ. Cães e gatos esperando um lar.">
+    <meta property="og:title" content="Adoção Animal | Guard Pets">
+    <meta property="og:description" content="Conheça os animais resgatados disponíveis para adoção em Resende/RJ. Cães e gatos esperando um lar.">
     <meta property="og:image" content="/image/LOGO PP.png">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#c5a666">
@@ -36,8 +36,8 @@
                 <i class="fas fa-bars"></i>
             </button>
             <nav class="nav-links" id="nav-menu">
-                <a href="/" class="nav-active">Início</a>
-                <a href="/adocao" class="">Adoção</a>
+                <a href="/" class="">Início</a>
+                <a href="/adocao" class="nav-active">Adoção</a>
                 <a href="/denuncia" class="">Denúncias</a>
                 <a href="/voluntariado" class="">Voluntariado</a>
                 <a href="/sobre" class="">Sobre</a>
@@ -52,170 +52,187 @@
         </div>
     </header>
 
-    <section class="hero">
-        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1600&q=80" class="hero-bg" alt="Hero">
-        <div class="container">
-            <div class="hero-content" data-aos="fade-right">
-                <h1>Operação <br><span style="color:var(--p-gold)">Resgate Real.</span></h1>
-                <p>O único instituto que une monitoramento via satélite, corpo jurídico especializado e reabilitação intensiva para animais em estado crítico em Resende/RJ.</p>
-                <div style="display:flex; gap:20px; flex-wrap:wrap;">
-                    <a href="/denuncia" class="btn-full" style="width:auto; padding:20px 40px; text-decoration:none; display:inline-block;">DENUNCIAR CRIME</a>
-                    <a href="/adocao" class="btn-full" style="width:auto; padding:20px 40px; background:transparent; border:2px solid #fff; text-decoration:none; display:inline-block;">QUERO ADOTAR</a>
-                </div>
-            </div>
+    <section class="page-hero" style="background-image:url('https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?auto=format&fit=crop&w=1600&q=80')">
+        <div class="page-hero-overlay"></div>
+        <div class="container page-hero-content" data-aos="fade-up">
+            <p class="page-hero-tag">ADOÇÃO TÁTICA</p>
+            <h1>Vidas Aguardando um Lar</h1>
+            <p>Todos os nossos animais são castrados, vacinados e reabilitados antes de serem disponibilizados para adoção.</p>
         </div>
     </section>
 
-    <!-- CONTADOR DE IMPACTO -->
-    <section class="stats-section" id="stats">
+    <section style="padding:80px 0;">
         <div class="container">
-            <div class="stats-grid">
-                <div class="stat-item" data-aos="zoom-in">
-                    <i class="fas fa-paw"></i>
-                    <span class="stat-number" data-target="847">0</span>
-                    <span class="stat-label">Animais Resgatados</span>
-                </div>
-                <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
-                    <i class="fas fa-gavel"></i>
-                    <span class="stat-number" data-target="312">0</span>
-                    <span class="stat-label">Condenações</span>
-                </div>
-                <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
-                    <i class="fas fa-home"></i>
-                    <span class="stat-number" data-target="1240">0</span>
-                    <span class="stat-label">Adoções Realizadas</span>
-                </div>
-                <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span class="stat-number" data-target="28">0</span>
-                    <span class="stat-label">Cidades Atendidas</span>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- NAVEGAÇÃO RÁPIDA PARA SEÇÕES -->
-    <section style="padding:80px 0; background:#fff;">
-        <div class="container">
-            <div style="text-align:center; margin-bottom:60px;" data-aos="fade-up">
-                <h4 style="color:var(--p-gold); font-weight:800; letter-spacing:3px; font-size:0.8rem;">O QUE VOCÊ PRECISA</h4>
-                <h2 style="font-family:'Montserrat'; font-size:2.5rem;">Como podemos ajudar?</h2>
+            <!-- FILTROS -->
+            <div class="filter-buttons" data-aos="fade-up">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="cachorro"><i class="fas fa-dog"></i> Cachorros</button>
+                <button class="filter-btn" data-filter="gato"><i class="fas fa-cat"></i> Gatos</button>
+                <button class="filter-btn" data-filter="pequeno">Porte Pequeno</button>
+                <button class="filter-btn" data-filter="medio">Porte Médio</button>
+                <button class="filter-btn" data-filter="grande">Porte Grande</button>
             </div>
-            <div class="home-cards-grid">
-                <a href="/adocao" class="home-action-card" data-aos="fade-up">
-                    <div class="home-card-icon"><i class="fas fa-paw"></i></div>
-                    <h4>Adoção</h4>
-                    <p>Conheça os animais resgatados disponíveis para adoção. Mais de 15 vidas esperando um lar.</p>
-                    <span class="home-card-link">Ver animais <i class="fas fa-arrow-right"></i></span>
-                </a>
-                <a href="/denuncia" class="home-action-card destaque" data-aos="fade-up" data-aos-delay="100">
-                    <div class="home-card-icon"><i class="fas fa-satellite-dish"></i></div>
-                    <h4>Denunciar</h4>
-                    <p>Presenciou maus-tratos? Registre sua denúncia sigilosa. Nossa equipe age em 24h.</p>
-                    <span class="home-card-link">Denunciar agora <i class="fas fa-arrow-right"></i></span>
-                </a>
-                <a href="/voluntariado" class="home-action-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="home-card-icon"><i class="fas fa-hands-helping"></i></div>
-                    <h4>Voluntariado</h4>
-                    <p>Seja motorista, fotógrafo ou lar temporário. Toda ajuda transforma vidas.</p>
-                    <span class="home-card-link">Quero ajudar <i class="fas fa-arrow-right"></i></span>
-                </a>
-                <a href="/doacao" class="home-action-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="home-card-icon"><i class="fas fa-heart"></i></div>
-                    <h4>Doação PIX</h4>
-                    <p>R$ 20 paga uma consulta. R$ 100 paga uma castração. Qualquer valor salva vidas.</p>
-                    <span class="home-card-link">Doe agora <i class="fas fa-arrow-right"></i></span>
-                </a>
-            </div>
-        </div>
-    </section>
 
-    <!-- PETS EM DESTAQUE -->
-    <section style="padding:80px 0; background:#f8f7f5;">
-        <div class="container">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:50px;" data-aos="fade-up">
-                <div>
-                    <h4 style="color:var(--p-gold); font-weight:800; letter-spacing:3px; font-size:0.8rem;">ADOÇÃO TÁTICA</h4>
-                    <h2 style="font-family:'Montserrat';">Animais em Destaque</h2>
-                </div>
-                <a href="/adocao" class="btn-full" style="width:auto; padding:14px 30px; text-decoration:none; white-space:nowrap;">VER TODOS</a>
+            <!-- INFORMATIVO -->
+            <div style="background:rgba(197,166,102,0.08); border:1px solid rgba(197,166,102,0.2); border-radius:16px; padding:20px 25px; margin-bottom:40px; display:flex; align-items:center; gap:15px;" data-aos="fade-up">
+                <i class="fas fa-shield-alt" style="color:var(--p-gold); font-size:1.5rem;"></i>
+                <p style="font-size:0.85rem; color:#555; margin:0;"><strong style="color:var(--p-dark);">Processo de Adoção Responsável:</strong> Ao solicitar o prontuário, nossa equipe entra em contato em até 24h para agendar uma visita de campo e análise da residência. Sem custos, sem burocracia excessiva.</p>
             </div>
-            <div class="pet-grid">
-                <div class="pet-card" data-aos="fade-up">
-                    <div class="pet-tag" style="background:var(--danger);">URGENTE</div>
-                    <img src="/image/Mel.png" class="pet-img" alt="Mel">
+
+            <!-- GRID DE PETS -->
+            <div class="pet-grid" id="pet-grid">
+                <div class="pet-card" data-especie="cachorro" data-tamanho="medio" data-aos="fade-up">
+                    <div class="pet-tag" style="background:#e67e22;">RESGATADO</div>
+                    <img src="image/Bob.png" class="pet-img" alt="Apolo">
                     <div class="pet-info">
-                        <h3>Mel (Vira-lata)</h3>
-                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Abandonada grávida. Dócil, adora colo. Precisa urgente de um lar.</p>
-                        <a href="/adocao" class="btn-full" style="padding:12px; text-decoration:none; display:block; text-align:center;">VER TODOS OS PETS</a>
+                        <h3>Apolo (Pitbull)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Vítima de abandono em Resende. Hoje está 100% reabilitado, castrado e dócil com crianças.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Apolo')">SOLICITAR PRONTUÁRIO</button>
                     </div>
                 </div>
-                <div class="pet-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="pet-card" data-especie="gato" data-tamanho="pequeno" data-aos="fade-up" data-aos-delay="100">
                     <div class="pet-tag" style="background:var(--danger);">URGENTE</div>
                     <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600" class="pet-img" alt="Luna">
                     <div class="pet-info">
                         <h3>Luna (Felino)</h3>
-                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Resgatada de cativeiro insalubre. Extremamente carinhosa, busca lar calmo.</p>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Resgatada de cativeiro insalubre. Extremamente carinhosa, busca lar calmo e sem outros animais.</p>
                         <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Luna')">SOLICITAR PRONTUÁRIO</button>
                     </div>
                 </div>
-                <div class="pet-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="pet-tag">REABILITADO</div>
+                <div class="pet-card" data-especie="cachorro" data-tamanho="grande" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pet-tag" >REABILITADO</div>
                     <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600" class="pet-img" alt="Thor">
                     <div class="pet-info">
                         <h3>Thor (Pastor Alemão)</h3>
-                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Ex-cão de guarda descartado. Inteligente, protetor e fiel.</p>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Ex-cão de guarda descartado pelo dono. Inteligente, protetor e fiel. Ideal para casas com quintal.</p>
                         <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Thor')">SOLICITAR PRONTUÁRIO</button>
                     </div>
                 </div>
+                <div class="pet-card" data-especie="cachorro" data-tamanho="pequeno" data-aos="fade-up">
+                    <div class="pet-tag" >REABILITADO</div>
+                    <img src="/image/Amora.png" class="pet-img" alt="Amora">
+                    <div class="pet-info">
+                        <h3>Amora (SRD)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Encontrada ferida na rua. Totalmente recuperada, vacinada e cheia de energia. Adora brincar.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Amora')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="cachorro" data-tamanho="grande" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pet-tag" style="background:#e67e22;">RESGATADO</div>
+                    <img src="/image/Bruce.png" class="pet-img" alt="Bruce">
+                    <div class="pet-info">
+                        <h3>Bruce (Rottweiler)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Resgatado de maus-tratos severos. Hoje é dócil com toda a família, ótimo com crianças maiores.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Bruce')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="cachorro" data-tamanho="medio" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pet-tag" style="background:var(--danger);">URGENTE</div>
+                    <img src="/image/Mel.png" class="pet-img" alt="Mel">
+                    <div class="pet-info">
+                        <h3>Mel (Vira-lata)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Abandonada grávida na rodovia. Dócil, adora colo e atenção. Precisa urgentemente de um lar.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Mel')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="gato" data-tamanho="pequeno" data-aos="fade-up">
+                    <div class="pet-tag" >REABILITADO</div>
+                    <img src="/image/Mia.png" class="pet-img" alt="Mia">
+                    <div class="pet-info">
+                        <h3>Mia (Siamês)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Resgatada de apartamento insalubre com 40 gatos. Tranquila, limpa e muito carinhosa com adultos.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Mia')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="cachorro" data-tamanho="pequeno" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pet-tag" style="background:var(--danger);">URGENTE</div>
+                    <img src="/image/Nina.png" class="pet-img" alt="Nina">
+                    <div class="pet-info">
+                        <h3>Nina (SRD)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Atropelada e abandonada na calçada. Recuperada com sucesso, busca lar com muito carinho e paciência.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Nina')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="cachorro" data-tamanho="grande" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pet-tag" style="background:#e67e22;">RESGATADO</div>
+                    <img src="/image/Ravi.png" class="pet-img" alt="Ravi">
+                    <div class="pet-info">
+                        <h3>Ravi (Labrador)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Encontrado desnutrido em Itatiaia. Hoje é um gigante gentil — ama crianças, idosos e outros pets.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Ravi')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="gato" data-tamanho="medio" data-aos="fade-up">
+                    <div class="pet-tag" >REABILITADO</div>
+                    <img src="/image/Simba.png" class="pet-img" alt="Simba">
+                    <div class="pet-info">
+                        <h3>Simba (Vira-lata)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Resgatado de colônia de rua. Castrado, vacinado e acostumado com outros animais. Muito sociável.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Simba')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="cachorro" data-tamanho="pequeno" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pet-tag" >REABILITADO</div>
+                    <img src="https://images.unsplash.com/photo-1601979031925-424e53b6caaa?w=600" class="pet-img" alt="Bolinha">
+                    <div class="pet-info">
+                        <h3>Bolinha (Poodle)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Idoso de 7 anos abandonado por mudança. Calmo, já treinado e ótimo para apartamento.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Bolinha')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="cachorro" data-tamanho="grande" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pet-tag" style="background:#e67e22;">RESGATADO</div>
+                    <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600" class="pet-img" alt="Zeca">
+                    <div class="pet-info">
+                        <h3>Zeca (Fila Brasileiro)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Resgatado de rinhadeiro clandestino. Em reabilitação intensa, precisa de lar experiente.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Zeca')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="gato" data-tamanho="pequeno" data-aos="fade-up">
+                    <div class="pet-tag" style="background:var(--danger);">URGENTE</div>
+                    <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600" class="pet-img" alt="Lily">
+                    <div class="pet-info">
+                        <h3>Lily (Angorá)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Filhote de 5 meses encontrada dentro de caixa de papelão. Precisa de vacinação completa ainda em andamento.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Lily')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="cachorro" data-tamanho="pequeno" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pet-tag" >REABILITADO</div>
+                    <img src="https://images.unsplash.com/photo-1583336663277-620dc1996580?w=600" class="pet-img" alt="Max">
+                    <div class="pet-info">
+                        <h3>Max (Bulldog Francês)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Apreendido de criadouro clandestino. Saudável, castrado e pronto para um lar com muito amor.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Max')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="gato" data-tamanho="pequeno" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pet-tag" >REABILITADO</div>
+                    <img src="https://images.unsplash.com/photo-1533743983669-94fa5c4338ec?w=600" class="pet-img" alt="Pérola">
+                    <div class="pet-info">
+                        <h3>Pérola (Gato SRD)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Resgatada junto com Lily. Brincalhona, adora outros gatos e crianças. Vacinação completa.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Pérola')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
+                <div class="pet-card" data-especie="cachorro" data-tamanho="grande" data-aos="fade-up">
+                    <div class="pet-tag" style="background:#e67e22;">RESGATADO</div>
+                    <img src="https://images.unsplash.com/photo-1568572933382-74d440642117?w=600" class="pet-img" alt="Tobias">
+                    <div class="pet-info">
+                        <h3>Tobias (Dogo Argentino)</h3>
+                        <p style="color:#666; font-size:0.85rem; margin:10px 0 20px 0;">Encontrado acorrentado sem água por dias. Em recuperação nutricional. Dócil com tratamento adequado.</p>
+                        <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true, 'Tobias')">SOLICITAR PRONTUÁRIO</button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- NOTÍCIAS / RELATÓRIOS -->
-    <section style="padding:80px 0; background:#fff;">
-        <div class="container">
-            <div style="text-align:center; margin-bottom:50px;" data-aos="fade-up">
-                <h4 style="color:var(--p-gold); font-weight:800; letter-spacing:3px; font-size:0.8rem;">TRANSPARÊNCIA</h4>
-                <h2 style="font-family:'Montserrat';">Relatórios de Inteligência</h2>
-            </div>
-            <div class="pet-grid">
-                <div class="news-card" data-aos="fade-up">
-                    <img src="/image/Luna.png" style="width:100%; height:200px; object-fit:cover;" alt="Notícia">
-                    <div style="padding:25px;">
-                        <span class="badge badge-happy">Sucesso</span>
-                        <h4 style="margin:12px 0 8px;">Justiça condena agressor em Resende</h4>
-                        <p style="font-size:0.8rem; color:#666; line-height:1.6;">Pela primeira vez, o corpo jurídico do Guard Pets consegue pena máxima para crime de maus-tratos severos em Resende/RJ.</p>
-                    </div>
-                </div>
-                <div class="news-card" data-aos="fade-up" data-aos-delay="100">
-                    <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=600" style="width:100%; height:200px; object-fit:cover;" alt="Notícia">
-                    <div style="padding:25px;">
-                        <span class="badge badge-sad">Alerta</span>
-                        <h4 style="margin:12px 0 8px;">Surto de Cinomose na Região</h4>
-                        <p style="font-size:0.8rem; color:#666; line-height:1.6;">Novo surto detectado em Volta Redonda. Campanha de vacinação gratuita emergencial iniciada — 200 doses disponíveis.</p>
-                    </div>
-                </div>
-                <div class="news-card" data-aos="fade-up" data-aos-delay="200">
-                    <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600" style="width:100%; height:200px; object-fit:cover;" alt="Notícia">
-                    <div style="padding:25px;">
-                        <span class="badge badge-happy">Campanha</span>
-                        <h4 style="margin:12px 0 8px;">Castração gratuita atinge 500 animais</h4>
-                        <p style="font-size:0.8rem; color:#666; line-height:1.6;">Nossa campanha permanente de castração ultrapassou 500 procedimentos realizados em 2026. <a href="/voluntariado" style="color:var(--p-gold);">Agende o seu.</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- BANNER CTA -->
-    <section style="background:var(--p-dark); padding:80px 0; text-align:center;">
-        <div class="container" data-aos="fade-up">
-            <h2 style="font-family:'Montserrat'; color:#fff; font-size:2.5rem; margin-bottom:15px;">Junte-se à causa.</h2>
-            <p style="color:rgba(255,255,255,0.5); margin-bottom:40px; max-width:500px; margin-left:auto; margin-right:auto;">Seja como voluntário, doador ou adotante — você tem o poder de mudar uma vida animal hoje.</p>
-            <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
-                <a href="/voluntariado" class="btn-full" style="width:auto; padding:18px 40px; text-decoration:none;">SER VOLUNTÁRIO</a>
-                <a href="/doacao" class="btn-full" style="width:auto; padding:18px 40px; background:transparent; border:2px solid var(--p-gold); color:var(--p-gold); text-decoration:none;">FAZER DOAÇÃO</a>
+            <!-- CTA VOLUNTÁRIO -->
+            <div style="text-align:center; margin-top:60px; padding:50px; background:var(--p-dark); border-radius:24px;" data-aos="fade-up">
+                <h3 style="font-family:'Montserrat'; color:#fff; margin-bottom:12px;">Tem lar temporário?</h3>
+                <p style="color:rgba(255,255,255,0.5); margin-bottom:25px; max-width:400px; margin-left:auto; margin-right:auto; font-size:0.9rem;">Abrigar um animal temporariamente enquanto ele aguarda adoção definitiva salva vidas.</p>
+                <a href="/voluntariado" class="btn-full" style="width:auto; padding:16px 35px; text-decoration:none; display:inline-block;">QUERO SER LAR TEMPORÁRIO</a>
             </div>
         </div>
     </section>

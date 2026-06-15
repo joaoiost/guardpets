@@ -203,6 +203,13 @@ app.put('/ocorrencias/:id/status', autenticar, async (req, res) => {
 
 // Arquivos estáticos (funciona local e no Vercel via includeFiles)
 app.use(express.static(__dirname));
+
+// Rotas limpas para cada página (sem extensão .html)
+const pages = ['adocao', 'denuncia', 'voluntariado', 'sobre', 'doacao'];
+pages.forEach(p => {
+    app.get(`/${p}`, (_req, res) => res.sendFile(path.join(__dirname, `${p}.html`)));
+});
+
 app.get('*', (_req, res) =>
     res.sendFile(path.join(__dirname, 'index.html'))
 );

@@ -7,6 +7,11 @@
       "config": {
         "includeFiles": [
           "index.html",
+          "adocao.html",
+          "denuncia.html",
+          "voluntariado.html",
+          "sobre.html",
+          "doacao.html",
           "index1.css",
           "index1.js",
           "image/**",

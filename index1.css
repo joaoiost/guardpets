@@ -1470,3 +1470,142 @@ input.invalid {
     margin-bottom: 0 !important;
     font-size: 0.85rem !important;
 }
+
+
+/* =========================================================
+   NAVEGAÇÃO — link ativo
+========================================================= */
+.nav-links a.nav-active {
+    color: var(--p-gold) !important;
+    position: relative;
+}
+.nav-links a.nav-active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0; right: 0;
+    height: 2px;
+    background: var(--p-gold);
+    border-radius: 2px;
+}
+
+/* =========================================================
+   PAGE HERO (páginas internas)
+========================================================= */
+.page-hero {
+    position: relative;
+    height: 55vh;
+    min-height: 380px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 70px;
+}
+.page-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(16,14,11,0.92) 100%);
+}
+.page-hero-content {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    max-width: 700px;
+}
+.page-hero-tag {
+    color: var(--p-gold);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+}
+.page-hero-content h1 {
+    font-family: 'Montserrat';
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 15px;
+    line-height: 1.1;
+}
+.page-hero-content p {
+    color: rgba(255,255,255,0.65);
+    font-size: 1rem;
+    max-width: 560px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   HOME — action cards grid
+========================================================= */
+.home-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+.home-action-card {
+    background: #f8f7f5;
+    border-radius: 20px;
+    padding: 35px 25px;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid rgba(0,0,0,0.06);
+    transition: all 0.3s;
+    display: block;
+}
+.home-action-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    border-color: rgba(197,166,102,0.3);
+}
+.home-action-card.destaque {
+    background: var(--p-dark);
+    color: #fff;
+    border-color: transparent;
+}
+.home-action-card.destaque h4 { color: #fff; }
+.home-action-card.destaque p { color: rgba(255,255,255,0.55); }
+.home-action-card.destaque .home-card-link { color: var(--p-gold); }
+.home-card-icon {
+    width: 56px; height: 56px;
+    background: rgba(197,166,102,0.12);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    color: var(--p-gold);
+}
+.home-action-card.destaque .home-card-icon {
+    background: rgba(197,166,102,0.15);
+}
+.home-action-card h4 {
+    font-family: 'Montserrat';
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+.home-action-card p {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+.home-card-link {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--p-dark);
+    letter-spacing: 0.5px;
+}
+@media (max-width: 1024px) { .home-cards-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .home-cards-grid { grid-template-columns: 1fr; } }
+
+/* =========================================================
+   FOOTER — grid melhorado
+========================================================= */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1.5fr;
+    gap: 60px;
+    padding: 60px 0 0;
+}
+@media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 30px; } }
+
+/* Footer override — substitui o estilo antigo simples */
+footer { opacity: 1 !important; text-align: left !important; padding: 0 0 30px !important; }
