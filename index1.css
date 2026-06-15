@@ -1609,3 +1609,102 @@ input.invalid {
 
 /* Footer override — substitui o estilo antigo simples */
 footer { opacity: 1 !important; text-align: left !important; padding: 0 0 30px !important; }
+
+
+/* =========================================================
+   BOTTOM NAV — MOBILE ONLY
+   Barra de navegação fixa na parte inferior para celular
+========================================================= */
+.bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(10,11,12,0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(197,166,102,0.18);
+    z-index: 5000;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.bnav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px 4px 12px;
+    min-height: 65px;
+    color: rgba(255,255,255,0.32);
+    text-decoration: none;
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    gap: 5px;
+    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+.bnav-item i { font-size: 1.25rem; }
+.bnav-item.bnav-active { color: var(--p-gold); }
+.bnav-item:hover,
+.bnav-item:active { color: var(--p-gold); }
+
+/* Botão central em destaque (Denunciar) */
+.bnav-center {
+    position: relative;
+    justify-content: flex-end;
+}
+.bnav-center-btn {
+    width: 54px; height: 54px;
+    background: var(--danger);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1.3rem;
+    position: absolute;
+    top: -20px;
+    border: 3px solid rgba(10,11,12,0.97);
+    box-shadow: 0 6px 24px rgba(231,76,60,0.55);
+    transition: transform 0.2s, background 0.2s;
+}
+.bnav-center:hover .bnav-center-btn,
+.bnav-center.bnav-active .bnav-center-btn {
+    transform: scale(1.1);
+    background: #c0392b;
+}
+.bnav-center span { margin-top: 36px; }
+
+@media (max-width: 768px) {
+    /* Ativa o bottom nav */
+    .bottom-nav { display: flex; }
+
+    /* Espaço para não esconder conteúdo atrás da barra */
+    body { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
+
+    /* Esconde os links do menu topo (bottom nav os substitui) */
+    #nav-menu a { display: none !important; }
+    .hamburger { display: none !important; }
+
+    /* Mantém o menu como flex para mostrar o botão Portal */
+    #nav-menu {
+        position: static !important;
+        background: none !important;
+        box-shadow: none !important;
+        flex-direction: row !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Botão Portal menor no mobile */
+    #nav-btn-portal { font-size: 0.6rem !important; padding: 8px 14px !important; }
+    #nav-agente-nome { font-size: 0.6rem !important; }
+
+    /* WhatsApp e back-to-top ficam acima do bottom nav */
+    .whatsapp-float { bottom: 82px !important; right: 16px !important; }
+    #btn-topo { bottom: 160px !important; right: 16px !important; }
+
+    /* Denuncia box sem margem negativa em telas pequenas */
+    .denuncia-box { margin-top: 0 !important; }
+}
