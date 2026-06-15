@@ -192,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-});
 
     // Header Scroll
     window.addEventListener('scroll', () => {
@@ -759,5 +758,155 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('painel-modal')?.addEventListener('click', (e) => {
         if (e.target.id === 'painel-modal') fecharPainel();
     });
+
+
+
+    // =========================================================
+    //  BOTÃO VOLTAR AO TOPO
+    // =========================================================
+    const btnTopo = document.getElementById('btn-topo');
+    if (btnTopo) {
+        window.addEventListener('scroll', () => {
+            btnTopo.classList.toggle('visible', window.scrollY > 400);
+        });
+        btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+
+    // =========================================================
+    //  FAVORITAR PET
+    // =========================================================
+    let favoritos = JSON.parse(localStorage.getItem('gp_favoritos') || '[]');
+
+    window.toggleFavorito = (nome, btn) => {
+        const idx = favoritos.indexOf(nome);
+        if (idx === -1) {
+            favoritos.push(nome);
+            btn.classList.add('favoritado');
+            GerenciadorEventos.exibirToast('❤️ Favoritado!', `<strong>${nome}</strong> adicionado aos seus favoritos.`, 'sucesso');
+        } else {
+            favoritos.splice(idx, 1);
+            btn.classList.remove('favoritado');
+            GerenciadorEventos.exibirToast('💔 Removido', `<strong>${nome}</strong> removido dos favoritos.`, 'alerta');
+        }
+        localStorage.setItem('gp_favoritos', JSON.stringify(favoritos));
+    };
+
+    // Adicionar botão de favorito em cada card
+    document.querySelectorAll('#pet-grid .pet-card').forEach(card => {
+        const info = card.querySelector('.pet-info');
+        const h3   = info?.querySelector('h3');
+        if (!h3) return;
+        const nome = h3.textContent.split('(')[0].trim();
+        const btn  = document.createElement('button');
+        btn.className  = 'btn-favorito' + (favoritos.includes(nome) ? ' favoritado' : '');
+        btn.title      = 'Favoritar';
+        btn.innerHTML  = '<i class="fas fa-heart"></i>';
+        btn.onclick    = () => toggleFavorito(nome, btn);
+        card.appendChild(btn);
+    });
+
+    // =========================================================
+    //  LOADING SCREEN
+    // =========================================================
+    window.addEventListener('load', () => {
+        const loader = document.getElementById('loading-screen');
+        if (loader) {
+            setTimeout(() => loader.classList.add('oculto'), 600);
+            setTimeout(() => loader.remove(), 1200);
+        }
+    });
+
+    // =========================================================
+    //  BUSCA NO PAINEL (sobrescreve carregarDenuncias com filtro)
+    // =========================================================
+    window.buscarNoPainel = () => {
+        const termo = document.getElementById('painel-busca')?.value.toLowerCase() || '';
+        document.querySelectorAll('.painel-denuncia-card').forEach(card => {
+            const texto = card.textContent.toLowerCase();
+            card.style.display = texto.includes(termo) ? '' : 'none';
+        });
+    };
+
+
+
+
+    // =========================================================
+    //  PIX — Copiar chave
+    // =========================================================
+    window.copiarChavePix = () => {
+        navigator.clipboard.writeText('guardpets@resende.org').then(() => {
+            GerenciadorEventos.exibirToast('✅ Copiado!', 'Chave PIX copiada para a área de transferência.', 'sucesso');
+        });
+    };
+
+    window.copiarPix = (valor) => {
+        navigator.clipboard.writeText('guardpets@resende.org').then(() => {
+            Swal.fire({
+                title: 'Obrigado! 🐾',
+                html: `Chave PIX copiada!<br><br>Valor sugerido: <strong style="color:#c5a666">${valor}</strong><br><small style="opacity:0.6">Abra o app do banco e cole a chave PIX.</small>`,
+                icon: 'success', confirmButtonColor: '#c5a666',
+            });
+        });
+    };
+
+    // =========================================================
+    //  QUIZ PET IDEAL
+    // =========================================================
+    const quizRespostas = {};
+
+    document.querySelectorAll('.quiz-op').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const q = parseInt(btn.dataset.q);
+            quizRespostas[q] = btn.dataset.v;
+
+            const fill = document.getElementById('quiz-progress-fill');
+            if (fill) fill.style.width = (q / 3 * 100) + '%';
+
+            if (q < 3) {
+                document.querySelector(`.quiz-pergunta[data-q="${q}"]`).classList.remove('active');
+                document.querySelector(`.quiz-pergunta[data-q="${q+1}"]`).classList.add('active');
+            } else {
+                mostrarResultadoQuiz();
+            }
+        });
+    });
+
+    function mostrarResultadoQuiz() {
+        document.querySelectorAll('.quiz-pergunta').forEach(p => p.classList.remove('active'));
+        document.getElementById('quiz-resultado').style.display = 'block';
+        if (document.getElementById('quiz-progress-fill'))
+            document.getElementById('quiz-progress-fill').style.width = '100%';
+
+        const { 1: moradia, 2: estilo, 3: exp } = quizRespostas;
+        let emoji, nome, desc;
+
+        if (estilo === 'tranquilo' || moradia === 'apto') {
+            emoji = '🐱'; nome = 'Um gato independente é ideal para você!';
+            desc = 'Gatos se adaptam muito bem a apartamentos e pessoas mais tranquilas. Luna e Mia estão esperando por você!';
+        } else if (estilo === 'ativo' && (moradia === 'casa' || moradia === 'sitio')) {
+            emoji = '🐕'; nome = 'Um cachorro de grande porte combina com você!';
+            desc = 'Com sua energia e espaço, Ravi, Thor ou Bruce seriam companheiros perfeitos para aventuras!';
+        } else if (exp === 'nao' || exp === 'pouca') {
+            emoji = '🐶'; nome = 'Um cachorro de pequeno porte é perfeito!';
+            desc = 'Para quem está começando, Nina ou Amora são dóceis, fáceis de cuidar e cheias de amor para dar!';
+        } else {
+            emoji = '🐾'; nome = 'Você está pronto para qualquer pet!';
+            desc = 'Com sua experiência e espaço, todos os nossos animais teriam um lar incrível com você!';
+        }
+
+        document.getElementById('quiz-pet-emoji').textContent = emoji;
+        document.getElementById('quiz-pet-nome').textContent = nome;
+        document.getElementById('quiz-pet-desc').textContent = desc;
+    }
+
+    window.reiniciarQuiz = () => {
+        Object.keys(quizRespostas).forEach(k => delete quizRespostas[k]);
+        document.getElementById('quiz-resultado').style.display = 'none';
+        document.querySelectorAll('.quiz-pergunta').forEach(p => p.classList.remove('active'));
+        document.querySelector('.quiz-pergunta[data-q="1"]').classList.add('active');
+        if (document.getElementById('quiz-progress-fill'))
+            document.getElementById('quiz-progress-fill').style.width = '0%';
+    };
+
 
 });

@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guard Pets | Intelligence, Rescue & Welfare</title>
+    <meta name="description" content="Guard Pets Intelligence — resgate, adoção e proteção animal em Resende/RJ. Denuncie maus-tratos, adote um pet ou seja voluntário.">
+    <meta property="og:title" content="Guard Pets Intelligence">
+    <meta property="og:description" content="Resgate, adoção e proteção animal em Resende/RJ. Denuncie maus-tratos ou adote um pet.">
+    <meta property="og:image" content="/image/LOGO PP.png">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#c5a666">
     <link rel="icon" type="image/png" href="/image/ICON.png">
 
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -17,6 +23,14 @@
         <link rel="stylesheet" href="index1.css">
 </head>
 <body>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <a class="logo" style="font-size:2.5rem;">GUARD<span>PETS</span></a>
+            <div class="loader-bar"><div class="loader-fill"></div></div>
+        </div>
+    </div>
 
     <header id="main-header">
         <div class="container nav-wrapper">
@@ -440,6 +454,35 @@
         </div>
     </section>
 
+
+    <!-- DOAÇÃO VIA PIX -->
+    <section id="doacao" class="doacao-section">
+        <div class="container doacao-grid">
+            <div class="doacao-texto" data-aos="fade-right">
+                <h4>APOIE A CAUSA</h4>
+                <h2>Doe via <span>PIX</span></h2>
+                <p>Cada contribuição financia resgates, cirurgias de emergência e a manutenção do nosso canil. Qualquer valor transforma vidas.</p>
+                <div class="pix-valores">
+                    <button class="pix-valor-btn" onclick="copiarPix('R$ 20')">R$ 20<br><small>1 consulta vet.</small></button>
+                    <button class="pix-valor-btn" onclick="copiarPix('R$ 50')">R$ 50<br><small>Vacinação completa</small></button>
+                    <button class="pix-valor-btn destaque" onclick="copiarPix('R$ 100')">R$ 100<br><small>1 cirurgia de castração</small></button>
+                </div>
+                <div class="pix-chave-box">
+                    <span>Chave PIX:</span>
+                    <strong id="pix-chave">guardpets@resende.org</strong>
+                    <button onclick="copiarChavePix()" class="pix-copiar-btn"><i class="fas fa-copy"></i> COPIAR</button>
+                </div>
+            </div>
+            <div class="doacao-qr" data-aos="fade-left">
+                <div class="qr-box">
+                    <img src="/image/ICON.png" alt="QR Code PIX" style="width:120px; opacity:0.3;">
+                    <p style="color:rgba(255,255,255,0.3); font-size:0.8rem; margin-top:15px;">QR Code PIX</p>
+                    <p style="color:rgba(255,255,255,0.2); font-size:0.7rem;">Abra o app do banco e escaneie</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- PATROCINADORES -->
     <section id="patrocinadores" class="patrocinadores-section">
         <div class="container">
@@ -450,6 +493,61 @@
                 <img src="/image/PATROCINADOR.png" alt="Patrocinador" class="patrocinador-logo" style="opacity:0.3;">
             </div>
             <p style="text-align:center; margin-top:30px; font-size:0.8rem; color:#bbb;">Quer ser parceiro? <a href="mailto:contato@guardpets.com.br" style="color:var(--p-gold);">contato@guardpets.com.br</a></p>
+        </div>
+    </section>
+
+
+    <!-- QUIZ PET IDEAL -->
+    <section id="quiz" class="quiz-section">
+        <div class="container" style="max-width:700px;">
+            <div style="text-align:center; margin-bottom:40px;" data-aos="fade-up">
+                <h4 style="color:var(--p-gold); font-weight:800; letter-spacing:3px;">DESCUBRA</h4>
+                <h2 style="font-family:'Montserrat';">Qual Pet Combina Com Você?</h2>
+                <p style="color:#555; margin-top:10px;">Responda 3 perguntas e encontre seu companheiro ideal.</p>
+            </div>
+            <div class="quiz-box" data-aos="fade-up">
+                <div id="quiz-conteudo">
+                    <div class="quiz-pergunta active" data-q="1">
+                        <p class="quiz-numero">Pergunta 1 de 3</p>
+                        <h4>Onde você mora?</h4>
+                        <div class="quiz-opcoes">
+                            <button class="quiz-op" data-q="1" data-v="casa">🏠 Casa com quintal</button>
+                            <button class="quiz-op" data-q="1" data-v="apto">🏢 Apartamento</button>
+                            <button class="quiz-op" data-q="1" data-v="sitio">🌳 Sítio / Fazenda</button>
+                        </div>
+                    </div>
+                    <div class="quiz-pergunta" data-q="2">
+                        <p class="quiz-numero">Pergunta 2 de 3</p>
+                        <h4>Qual seu estilo de vida?</h4>
+                        <div class="quiz-opcoes">
+                            <button class="quiz-op" data-q="2" data-v="ativo">🏃 Muito ativo — adoro sair</button>
+                            <button class="quiz-op" data-q="2" data-v="moderado">😊 Moderado — saio às vezes</button>
+                            <button class="quiz-op" data-q="2" data-v="tranquilo">🛋️ Tranquilo — prefiro em casa</button>
+                        </div>
+                    </div>
+                    <div class="quiz-pergunta" data-q="3">
+                        <p class="quiz-numero">Pergunta 3 de 3</p>
+                        <h4>Tem experiência com pets?</h4>
+                        <div class="quiz-opcoes">
+                            <button class="quiz-op" data-q="3" data-v="sim">✅ Sim, já tive vários</button>
+                            <button class="quiz-op" data-q="3" data-v="pouca">🤔 Pouca experiência</button>
+                            <button class="quiz-op" data-q="3" data-v="nao">❌ Primeira vez</button>
+                        </div>
+                    </div>
+                    <div id="quiz-resultado" style="display:none; text-align:center; padding:30px 0;">
+                        <div id="quiz-pet-emoji" style="font-size:4rem; margin-bottom:15px;"></div>
+                        <h3 id="quiz-pet-nome" style="font-family:'Montserrat'; margin-bottom:10px;"></h3>
+                        <p id="quiz-pet-desc" style="color:#555; font-size:0.9rem; margin-bottom:25px;"></p>
+                        <div style="display:flex; gap:15px; justify-content:center; flex-wrap:wrap;">
+                            <button class="btn-full" style="width:auto; padding:14px 30px;" onclick="location.href='#adocao'">VER PETS PARA ADOÇÃO</button>
+                            <button class="btn-full" style="width:auto; padding:14px 30px; background:transparent; border:2px solid var(--p-dark);" onclick="reiniciarQuiz()">REFAZER</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="quiz-progress">
+                    <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -472,6 +570,11 @@
         </div>
     </section>
 
+
+    <!-- VOLTAR AO TOPO -->
+    <button id="btn-topo" aria-label="Voltar ao topo" title="Voltar ao topo">
+        <i class="fas fa-chevron-up"></i>
+    </button>
 
     <!-- WHATSAPP FLUTUANTE -->
     <a href="https://wa.me/5524999999999" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
@@ -501,6 +604,9 @@
 
                 <!-- ABA: DENÚNCIAS -->
                 <div id="aba-denuncias" class="painel-aba active">
+                    <div class="painel-busca-wrapper">
+                        <input type="text" id="painel-busca" placeholder="🔍  Buscar por cidade, tipo ou protocolo..." oninput="buscarNoPainel()">
+                    </div>
                     <div class="painel-aba-header">
                         <h4>Ocorrências Registradas</h4>
                         <span id="badge-denuncias" class="painel-badge">0</span>
