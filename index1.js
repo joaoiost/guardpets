@@ -781,12 +781,30 @@ document.addEventListener('DOMContentLoaded', () => {
         carregarAdocoes();
     }
 
-    function carregarDenuncias() {
+    async function carregarDenuncias() {
         const lista = document.getElementById('lista-denuncias');
         const badge = document.getElementById('badge-denuncias');
         if (!lista) return;
 
-        const ocorrencias = db.getOcorrencias().reverse();
+        lista.innerHTML = '<div class="painel-vazio"><i class="fas fa-spinner fa-spin"></i> Carregando...</div>';
+
+        let ocorrencias = [];
+        const token = localStorage.getItem('gp_supa_token');
+
+        try {
+            const resp = await fetch('/ocorrencias', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (resp.ok) {
+                ocorrencias = await resp.json();
+            } else {
+                // fallback para localStorage se banco não configurado
+                ocorrencias = db.getOcorrencias().reverse();
+            }
+        } catch (_) {
+            ocorrencias = db.getOcorrencias().reverse();
+        }
+
         if (badge) badge.textContent = ocorrencias.length;
 
         if (ocorrencias.length === 0) {
@@ -804,7 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="pdc-protocolo">${oc.protocolo || 'SEM PROTOCOLO'}</div>
                         <div class="pdc-tipo">${oc.tipo}</div>
                         <div class="pdc-local"><i class="fas fa-map-marker-alt"></i> ${oc.localizacao}</div>
-                        <div class="pdc-nome">Denunciante: ${oc.nome || 'Anônimo'}</div>
+                        <div class="pdc-nome">Denunciante: ${oc.nome_denunciante || oc.nome || 'Anônimo'}</div>
                     </div>
                 </div>
                 <div class="pdc-relato">${oc.relato}</div>
@@ -857,10 +875,20 @@ document.addEventListener('DOMContentLoaded', () => {
         setEl('ps-adocoes',  ags.length);
     }
 
-    window.atualizarStatus = (id, selectId) => {
+    window.atualizarStatus = async (id, selectId) => {
         const sel = document.getElementById(selectId);
         if (!sel) return;
         const novoStatus = sel.value;
+        const token = localStorage.getItem('gp_supa_token');
+
+        try {
+            await fetch(`/ocorrencias/${id}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ status: novoStatus })
+            });
+        } catch (_) {}
+
         db.atualizarStatusOcorrencia(id, novoStatus);
         GerenciadorEventos.exibirToast('✅ Status Atualizado', `Ocorrência marcada como: <strong>${novoStatus}</strong>`, 'sucesso');
     };
