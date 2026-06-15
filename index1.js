@@ -1,5 +1,5 @@
 // ─── Supabase Auth (chamadas diretas — sem CDN) ───────────────────────────────
-const _SUPA_URL = 'https://uwlxknmpsurlyljrajbr.supabase.co';
+const _SUPA_URL = 'https://uwlxknmpsurlyjlrajbr.supabase.co';
 const _SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3bHhrbm1wc3VybHlqbHJhamJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NDM1MzUsImV4cCI6MjA5NjUxOTUzNX0.o_FnYF843XupwK9xx2KTx7IKdj5S1hHJhKoKE0shBAY';
 
 const _supaHeaders = { 'apikey': _SUPA_KEY, 'Content-Type': 'application/json' };
