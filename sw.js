@@ -1,4 +1,4 @@
-const CACHE = 'guardpets-v1';
+const CACHE = 'guardpets-v2';
 const STATIC = ['/', '/index1.css', '/index1.js'];
 
 self.addEventListener('install', e => {
