@@ -17,6 +17,8 @@
           "manifest.json",
           "sw.js",
           "image/**",
+          "image/castracao.jpg",
+          "image/adocao.jpg",
           "js/**"
         ]
       }
