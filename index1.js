@@ -701,6 +701,37 @@ document.addEventListener('DOMContentLoaded', () => {
         ['gp_usuario', 'gp_token', 'gp_supa_token', 'gp_supa_user'].forEach(k => localStorage.removeItem(k));
     }
 
+    window.abrirMeuPerfil = () => {
+        const user = JSON.parse(localStorage.getItem('gp_supa_user') || localStorage.getItem('gp_usuario') || 'null');
+        if (!user) return;
+
+        const meta     = user.user_metadata || {};
+        const nome     = meta.nome ? `${meta.nome} ${meta.sobrenome || ''}`.trim() : (user.email || '').split('@')[0];
+        const iniciais = _iniciais(nome);
+        const desde    = user.created_at
+            ? new Date(user.created_at).toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' })
+            : new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+
+        const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+        set('pm-avatar',       iniciais);
+        set('pm-badge',        meta.especialidade || 'Agente');
+        set('pm-nome',         nome);
+        set('pm-email',        user.email || '');
+        set('pm-especialidade', meta.especialidade || 'Agente');
+        set('pm-desde',        desde);
+        set('pm-email2',       user.email || '');
+
+        const modal = document.getElementById('perfil-modal');
+        if (modal) { modal.style.display = 'flex'; modal.style.opacity = '1'; modal.style.pointerEvents = 'all'; modal.classList.add('active'); }
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.fecharMeuPerfil = () => {
+        const modal = document.getElementById('perfil-modal');
+        if (modal) { modal.classList.remove('active'); modal.style.display = 'none'; }
+        document.body.style.overflow = 'auto';
+    };
+
     window.togglePerfilDropdown = (forceClose) => {
         const dropdown = document.getElementById('perfil-dropdown');
         const overlay  = document.getElementById('pd-overlay');

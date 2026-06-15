@@ -64,6 +64,7 @@
                         </div>
                     </div>
                     <div class="pd-divider"></div>
+                    <button class="pd-btn" onclick="abrirMeuPerfil(); togglePerfilDropdown(false)"><i class="fas fa-id-badge"></i> Meu Perfil</button>
                     <button class="pd-btn" onclick="abrirPainel(); togglePerfilDropdown(false)"><i class="fas fa-satellite-dish"></i> Painel do Agente</button>
                     <button class="pd-btn pd-btn-sair" onclick="fazerLogout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
                 </div>
@@ -860,6 +861,54 @@
             <button type="submit" class="btn-full" style="background:var(--p-dark);">SOLICITAR ACESSO AOS DADOS</button>
             <p style="text-align:center; font-size:0.6rem; color:#999; margin-top:15px;">Ao solicitar, sua ficha passará por análise tática e jurídica.</p>
         </form>
+    </div>
+</div>
+
+<!-- MODAL MEU PERFIL -->
+<div class="auth-overlay" id="perfil-modal" style="display:none; opacity:0; pointer-events:none;">
+    <div class="perfil-modal-card">
+        <button class="close-auth" onclick="fecharMeuPerfil()" style="color:#fff;"><i class="fas fa-times"></i></button>
+        <div class="pm-topo">
+            <div class="pm-avatar" id="pm-avatar"></div>
+            <div class="pm-badge" id="pm-badge">Agente</div>
+        </div>
+        <div class="pm-nome" id="pm-nome"></div>
+        <div class="pm-email" id="pm-email"></div>
+        <div class="pm-divider"></div>
+        <div class="pm-grid">
+            <div class="pm-item">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <span class="pm-label">Status</span>
+                    <span class="pm-val pm-ativo">● Conta Ativa</span>
+                </div>
+            </div>
+            <div class="pm-item">
+                <i class="fas fa-star"></i>
+                <div>
+                    <span class="pm-label">Especialidade</span>
+                    <span class="pm-val" id="pm-especialidade"></span>
+                </div>
+            </div>
+            <div class="pm-item">
+                <i class="fas fa-calendar-check"></i>
+                <div>
+                    <span class="pm-label">Agente desde</span>
+                    <span class="pm-val" id="pm-desde"></span>
+                </div>
+            </div>
+            <div class="pm-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <span class="pm-label">Email</span>
+                    <span class="pm-val" id="pm-email2"></span>
+                </div>
+            </div>
+        </div>
+        <div class="pm-divider"></div>
+        <button class="btn-full" onclick="abrirPainel(); fecharMeuPerfil();" style="margin-top:8px; font-size:0.8rem; padding:14px;">
+            <i class="fas fa-satellite-dish"></i> &nbsp;ACESSAR PAINEL DO AGENTE
+        </button>
     </div>
 </div>
 

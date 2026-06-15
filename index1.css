@@ -1611,6 +1611,131 @@ input.invalid {
 footer { opacity: 1 !important; text-align: left !important; padding: 0 0 30px !important; }
 
 /* =========================================================
+   MODAL MEU PERFIL
+========================================================= */
+#perfil-modal.active {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+}
+
+.perfil-modal-card {
+    background: linear-gradient(160deg, #111214 0%, #0d0f11 100%);
+    border: 1px solid rgba(197,166,102,0.2);
+    border-radius: 24px;
+    padding: 40px 36px 32px;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+    animation: fadeSlideIn 0.22s ease;
+}
+
+.pm-topo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.pm-avatar {
+    width: 88px;
+    height: 88px;
+    background: linear-gradient(135deg, var(--p-gold), #7a6230);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 2rem;
+    color: #0a0a0a;
+    border: 3px solid rgba(197,166,102,0.4);
+    box-shadow: 0 0 30px rgba(197,166,102,0.2);
+}
+
+.pm-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--p-gold);
+    background: rgba(197,166,102,0.1);
+    border: 1px solid rgba(197,166,102,0.25);
+    padding: 4px 14px;
+    border-radius: 20px;
+}
+
+.pm-nome {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.pm-email {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 20px;
+}
+
+.pm-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 18px 0;
+}
+
+.pm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    text-align: left;
+}
+
+.pm-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.pm-item > i {
+    color: var(--p-gold);
+    font-size: 0.9rem;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.pm-label {
+    display: block;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 4px;
+}
+
+.pm-val {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.pm-ativo { color: #2ecc71; }
+
+@media (max-width: 480px) {
+    .perfil-modal-card { padding: 32px 20px 24px; }
+    .pm-grid { grid-template-columns: 1fr; }
+}
+
+/* =========================================================
    PERFIL DROPDOWN — header do agente logado
 ========================================================= */
 .perfil-trigger {
