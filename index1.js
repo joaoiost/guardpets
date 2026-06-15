@@ -1,7 +1,12 @@
 // ─── Supabase Auth ────────────────────────────────────────────────────────────
 const _SUPA_URL = 'https://uwlxknmpsurlyljrajbr.supabase.co';
 const _SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3bHhrbm1wc3VybHlqbHJhamJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NDM1MzUsImV4cCI6MjA5NjUxOTUzNX0.o_FnYF843XupwK9xx2KTx7IKdj5S1hHJhKoKE0shBAY';
-const supabaseClient = supabase.createClient(_SUPA_URL, _SUPA_KEY);
+let supabaseClient = null;
+try {
+    supabaseClient = supabase.createClient(_SUPA_URL, _SUPA_KEY);
+} catch(e) {
+    console.error('[GuardPets] Supabase não carregou:', e);
+}
 
 /**
  * =============================================================
@@ -395,6 +400,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
             btn.disabled  = true;
+
+            if (!supabaseClient) {
+                Swal.fire('Erro', 'Serviço de autenticação não disponível. Recarregue a página (Ctrl+F5).', 'error');
+                btn.innerHTML = textoOriginal;
+                btn.disabled  = false;
+                return;
+            }
 
             try {
                 const nome          = formReg.querySelector('input[name="nome"]')?.value          || '';
