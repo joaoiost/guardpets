@@ -31,7 +31,12 @@
                 <a href="#voluntariado">Voluntariado</a>
                 <a href="#denuncia">Denúncias</a>
                 <a href="#mapa">Mapa</a>
-                <button onclick="toggleAuth(true)" class="nav-links btn-agent" style="border:none; cursor:pointer;">PORTAL DO AGENTE</button>
+                <span id="nav-agente-info" style="display:none; align-items:center; gap:15px;">
+                    <span id="nav-agente-nome" style="color:var(--p-gold); font-size:0.75rem; font-weight:700;"></span>
+                    <button onclick="abrirPainel()" class="nav-links btn-agent" style="border:none; cursor:pointer;">PAINEL</button>
+                    <button onclick="fazerLogout()" style="background:none; border:none; color:rgba(255,255,255,0.5); font-size:0.75rem; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px;">SAIR</button>
+                </span>
+                <button id="nav-btn-portal" onclick="toggleAuth(true)" class="nav-links btn-agent" style="border:none; cursor:pointer;">PORTAL DO AGENTE</button>
             </nav>
         </div>
     </header>
@@ -472,6 +477,75 @@
     <a href="https://wa.me/5524999999999" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
+
+
+    <!-- PAINEL DO AGENTE -->
+    <div class="painel-overlay" id="painel-modal">
+        <div class="painel-card">
+            <div class="painel-header">
+                <div>
+                    <p style="color:var(--p-gold); font-size:0.7rem; letter-spacing:3px; font-weight:800;">ACESSO RESTRITO</p>
+                    <h2 style="font-family:'Montserrat'; color:#fff; margin:5px 0 0;">Painel do Agente</h2>
+                    <p id="painel-agente-nome" style="font-size:0.8rem; color:rgba(255,255,255,0.5); margin-top:5px;"></p>
+                </div>
+                <button onclick="fecharPainel()" style="background:none; border:none; color:rgba(255,255,255,0.4); font-size:1.5rem; cursor:pointer;"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="painel-tabs">
+                <button class="painel-tab active" onclick="trocarAbaPainel('denuncias', this)"><i class="fas fa-satellite-dish"></i> Denúncias</button>
+                <button class="painel-tab" onclick="trocarAbaPainel('adocoes', this)"><i class="fas fa-paw"></i> Adoções</button>
+                <button class="painel-tab" onclick="trocarAbaPainel('stats', this)"><i class="fas fa-chart-bar"></i> Estatísticas</button>
+            </div>
+
+            <div class="painel-body">
+
+                <!-- ABA: DENÚNCIAS -->
+                <div id="aba-denuncias" class="painel-aba active">
+                    <div class="painel-aba-header">
+                        <h4>Ocorrências Registradas</h4>
+                        <span id="badge-denuncias" class="painel-badge">0</span>
+                    </div>
+                    <div id="lista-denuncias" class="painel-lista"></div>
+                </div>
+
+                <!-- ABA: ADOÇÕES -->
+                <div id="aba-adocoes" class="painel-aba" style="display:none;">
+                    <div class="painel-aba-header">
+                        <h4>Solicitações de Adoção</h4>
+                        <span id="badge-adocoes" class="painel-badge">0</span>
+                    </div>
+                    <div id="lista-adocoes" class="painel-lista"></div>
+                </div>
+
+                <!-- ABA: ESTATÍSTICAS -->
+                <div id="aba-stats" class="painel-aba" style="display:none;">
+                    <div class="painel-stats-grid">
+                        <div class="painel-stat-card">
+                            <i class="fas fa-satellite-dish"></i>
+                            <span id="ps-total" class="ps-num">0</span>
+                            <span class="ps-label">Total de Denúncias</span>
+                        </div>
+                        <div class="painel-stat-card">
+                            <i class="fas fa-spinner"></i>
+                            <span id="ps-analise" class="ps-num">0</span>
+                            <span class="ps-label">Em Análise</span>
+                        </div>
+                        <div class="painel-stat-card" style="border-color:#27ae60;">
+                            <i class="fas fa-check-circle" style="color:#27ae60;"></i>
+                            <span id="ps-resgatado" class="ps-num" style="color:#27ae60;">0</span>
+                            <span class="ps-label">Resgatados</span>
+                        </div>
+                        <div class="painel-stat-card" style="border-color:var(--p-gold);">
+                            <i class="fas fa-paw" style="color:var(--p-gold);"></i>
+                            <span id="ps-adocoes" class="ps-num" style="color:var(--p-gold);">0</span>
+                            <span class="ps-label">Adoções Solicitadas</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <div class="auth-overlay" id="auth-modal">
         <div class="auth-card">

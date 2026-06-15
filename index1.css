@@ -1082,3 +1082,228 @@ input.invalid {
     transform: scale(1.1);
     box-shadow: 0 12px 35px rgba(37,211,102,0.6);
 }
+
+
+/* =========================================================
+   PAINEL DO AGENTE
+========================================================= */
+.painel-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(20px);
+    z-index: 5000; opacity: 0;
+    visibility: hidden; transition: 0.4s;
+    display: flex; align-items: stretch; justify-content: flex-end;
+}
+.painel-overlay.active { opacity: 1; visibility: visible; }
+
+.painel-card {
+    background: #0f1012;
+    width: 100%;
+    max-width: 860px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border-left: 3px solid rgba(197,166,102,0.3);
+    animation: slideInRight 0.4s cubic-bezier(0.19,1,0.22,1);
+}
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+}
+
+.painel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 35px 40px 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.painel-tabs {
+    display: flex;
+    gap: 5px;
+    padding: 15px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.painel-tab {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.4);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex; align-items: center; gap: 8px;
+}
+.painel-tab:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.painel-tab.active { background: rgba(197,166,102,0.15); color: var(--p-gold); }
+
+.painel-body { flex: 1; overflow-y: auto; padding: 30px 40px; }
+
+.painel-aba-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.painel-aba-header h4 {
+    font-family: 'Montserrat';
+    color: #fff;
+    font-size: 1rem;
+}
+.painel-badge {
+    background: var(--p-gold);
+    color: var(--p-dark);
+    font-size: 0.7rem;
+    font-weight: 900;
+    padding: 3px 10px;
+    border-radius: 50px;
+}
+
+.painel-lista { display: flex; flex-direction: column; gap: 12px; }
+
+/* Card de denúncia no painel */
+.painel-denuncia-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 20px 24px;
+    transition: border-color 0.3s;
+}
+.painel-denuncia-card:hover { border-color: rgba(197,166,102,0.3); }
+
+.pdc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.pdc-protocolo {
+    font-family: 'Montserrat';
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--p-gold);
+    letter-spacing: 2px;
+}
+.pdc-tipo {
+    font-weight: 700;
+    color: #fff;
+    font-size: 0.95rem;
+    margin: 4px 0;
+}
+.pdc-local {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 4px;
+}
+.pdc-nome {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.3);
+}
+.pdc-relato {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.55);
+    margin: 10px 0;
+    line-height: 1.5;
+    border-left: 3px solid rgba(255,255,255,0.1);
+    padding-left: 12px;
+}
+.pdc-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.pdc-status-select {
+    background: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    color: #fff !important;
+    padding: 8px 14px !important;
+    font-size: 0.75rem !important;
+    border-radius: 8px !important;
+    width: auto !important;
+    margin-bottom: 0 !important;
+    cursor: pointer;
+}
+.pdc-btn-atualizar {
+    background: rgba(197,166,102,0.15);
+    border: 1px solid rgba(197,166,102,0.3);
+    color: var(--p-gold);
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+}
+.pdc-btn-atualizar:hover { background: var(--p-gold); color: var(--p-dark); }
+
+/* Card de adoção no painel */
+.painel-adocao-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.pac-pet { font-family: 'Montserrat'; font-size: 1rem; color: var(--p-gold); font-weight: 900; }
+.pac-adotante { font-weight: 700; color: #fff; font-size: 0.9rem; margin-top: 4px; }
+.pac-tel { font-size: 0.78rem; color: rgba(255,255,255,0.4); margin-top: 3px; }
+.pac-residencia { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
+.pac-protocolo { font-size: 0.7rem; color: rgba(197,166,102,0.6); letter-spacing: 1px; margin-top: 6px; }
+
+/* Stats do painel */
+.painel-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 10px;
+}
+.painel-stat-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    border-top: 3px solid rgba(197,166,102,0.4);
+}
+.painel-stat-card i { font-size: 1.8rem; color: var(--p-gold); margin-bottom: 15px; display: block; }
+.ps-num { display: block; font-family: 'Montserrat'; font-size: 2.5rem; font-weight: 900; color: #fff; }
+.ps-label { display: block; font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Estado vazio */
+.painel-vazio {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255,255,255,0.2);
+    font-size: 0.85rem;
+}
+.painel-vazio i { font-size: 3rem; display: block; margin-bottom: 15px; opacity: 0.3; }
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .painel-card { max-width: 100%; border-left: none; }
+    .painel-header { padding: 25px 20px 20px; }
+    .painel-tabs { padding: 10px 20px; }
+    .painel-body { padding: 20px; }
+    .painel-stats-grid { grid-template-columns: 1fr; }
+}
+
+/* Nav info do agente */
+#nav-agente-info { display: none; align-items: center; gap: 15px; }
+#nav-agente-info.visible { display: flex !important; }

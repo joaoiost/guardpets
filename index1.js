@@ -473,6 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 localStorage.setItem('gp_token',   data.token);
                 localStorage.setItem('gp_usuario', JSON.stringify(data.usuario));
+                atualizarNavAgente(data.usuario);
 
                 GerenciadorEventos.exibirToast(
                     '🎖️ Acesso Concedido',
@@ -600,5 +601,163 @@ document.addEventListener('DOMContentLoaded', () => {
             GerenciadorEventos._atualizarAreaStatus(oc);
         });
     }
+
+
+
+    // =========================================================
+    //  PAINEL DO AGENTE
+    // =========================================================
+
+    // Checar se já está logado ao carregar
+    (function checarSessao() {
+        const usuario = JSON.parse(localStorage.getItem('gp_usuario') || 'null');
+        if (usuario) atualizarNavAgente(usuario);
+    })();
+
+    function atualizarNavAgente(usuario) {
+        const btnPortal = document.getElementById('nav-btn-portal');
+        const infoNav   = document.getElementById('nav-agente-info');
+        const nomeNav   = document.getElementById('nav-agente-nome');
+        if (btnPortal) btnPortal.style.display = 'none';
+        if (infoNav)  { infoNav.style.display = 'flex'; infoNav.classList.add('visible'); }
+        if (nomeNav)  nomeNav.textContent = '👤 ' + (usuario.nome || usuario.email);
+    }
+
+    window.fazerLogout = () => {
+        localStorage.removeItem('gp_token');
+        localStorage.removeItem('gp_usuario');
+        const btnPortal = document.getElementById('nav-btn-portal');
+        const infoNav   = document.getElementById('nav-agente-info');
+        if (btnPortal) btnPortal.style.display = '';
+        if (infoNav)  infoNav.classList.remove('visible');
+        GerenciadorEventos.exibirToast('Até logo!', 'Sessão encerrada com sucesso.', 'info');
+    };
+
+    // Patch: após login bem-sucedido, atualizar nav
+    const _loginOriginal = document.getElementById('form-login');
+    if (_loginOriginal) {
+        _loginOriginal.addEventListener('gp:login', (e) => atualizarNavAgente(e.detail));
+    }
+
+    window.abrirPainel = () => {
+        const usuario = JSON.parse(localStorage.getItem('gp_usuario') || 'null');
+        if (!usuario) { toggleAuth(true); return; }
+
+        const el = document.getElementById('painel-modal');
+        const nomeEl = document.getElementById('painel-agente-nome');
+        if (nomeEl) nomeEl.textContent = usuario.email + ' — ' + (usuario.tipo || 'Agente');
+        if (el) el.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        carregarPainel();
+    };
+
+    window.fecharPainel = () => {
+        const el = document.getElementById('painel-modal');
+        if (el) el.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    };
+
+    window.trocarAbaPainel = (aba, btn) => {
+        document.querySelectorAll('.painel-aba').forEach(a => a.style.display = 'none');
+        document.querySelectorAll('.painel-tab').forEach(b => b.classList.remove('active'));
+        const el = document.getElementById('aba-' + aba);
+        if (el) el.style.display = 'block';
+        if (btn) btn.classList.add('active');
+        if (aba === 'stats') carregarStats();
+    };
+
+    function carregarPainel() {
+        carregarDenuncias();
+        carregarAdocoes();
+    }
+
+    function carregarDenuncias() {
+        const lista = document.getElementById('lista-denuncias');
+        const badge = document.getElementById('badge-denuncias');
+        if (!lista) return;
+
+        const ocorrencias = db.getOcorrencias().reverse();
+        if (badge) badge.textContent = ocorrencias.length;
+
+        if (ocorrencias.length === 0) {
+            lista.innerHTML = '<div class="painel-vazio"><i class="fas fa-satellite-dish"></i>Nenhuma denúncia registrada ainda.</div>';
+            return;
+        }
+
+        lista.innerHTML = ocorrencias.map((oc, i) => {
+            const statusOpts = ['Registrado','Em Análise','Equipe Acionada','Resgatado','Encaminhado para Adoção']
+                .map(s => `<option value="${s}" ${oc.status === s ? 'selected' : ''}>${s}</option>`).join('');
+            return `
+            <div class="painel-denuncia-card">
+                <div class="pdc-header">
+                    <div>
+                        <div class="pdc-protocolo">${oc.protocolo || 'SEM PROTOCOLO'}</div>
+                        <div class="pdc-tipo">${oc.tipo}</div>
+                        <div class="pdc-local"><i class="fas fa-map-marker-alt"></i> ${oc.localizacao}</div>
+                        <div class="pdc-nome">Denunciante: ${oc.nome || 'Anônimo'}</div>
+                    </div>
+                </div>
+                <div class="pdc-relato">${oc.relato}</div>
+                <div class="pdc-footer">
+                    <select class="pdc-status-select" id="status-sel-${i}">${statusOpts}</select>
+                    <button class="pdc-btn-atualizar" onclick="atualizarStatus('${oc.id}', 'status-sel-${i}')">
+                        <i class="fas fa-save"></i> ATUALIZAR STATUS
+                    </button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function carregarAdocoes() {
+        const lista = document.getElementById('lista-adocoes');
+        const badge = document.getElementById('badge-adocoes');
+        if (!lista) return;
+
+        const agendamentos = db.getAgendamentos().reverse();
+        if (badge) badge.textContent = agendamentos.length;
+
+        if (agendamentos.length === 0) {
+            lista.innerHTML = '<div class="painel-vazio"><i class="fas fa-paw"></i>Nenhuma solicitação de adoção ainda.</div>';
+            return;
+        }
+
+        lista.innerHTML = agendamentos.map(ag => `
+            <div class="painel-adocao-card">
+                <div>
+                    <div class="pac-pet">🐾 ${ag.petNome || 'Animal'}</div>
+                    <div class="pac-adotante">${ag.nomeAdotante}</div>
+                    <div class="pac-tel"><i class="fas fa-phone"></i> ${ag.telefone}</div>
+                    <div class="pac-residencia"><i class="fas fa-home"></i> ${ag.residencia}</div>
+                    <div class="pac-protocolo">${ag.protocolo || ''}</div>
+                </div>
+                <div style="font-size:0.75rem; color:rgba(255,255,255,0.3); max-width:220px; line-height:1.5;">
+                    <b style="color:rgba(255,255,255,0.5);">Motivação:</b><br>${ag.motivacao || '—'}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function carregarStats() {
+        const ocs = db.getOcorrencias();
+        const ags = db.getAgendamentos();
+        const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        setEl('ps-total',    ocs.length);
+        setEl('ps-analise',  ocs.filter(o => o.status === 'Em Análise' || o.status === 'Equipe Acionada').length);
+        setEl('ps-resgatado',ocs.filter(o => o.status === 'Resgatado').length);
+        setEl('ps-adocoes',  ags.length);
+    }
+
+    window.atualizarStatus = (id, selectId) => {
+        const sel = document.getElementById(selectId);
+        if (!sel) return;
+        const novoStatus = sel.value;
+        db.atualizarStatusOcorrencia(id, novoStatus);
+        GerenciadorEventos.exibirToast('✅ Status Atualizado', `Ocorrência marcada como: <strong>${novoStatus}</strong>`, 'sucesso');
+    };
+
+    // Fechar painel clicando fora
+    document.getElementById('painel-modal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'painel-modal') fecharPainel();
+    });
 
 });
