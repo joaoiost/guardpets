@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     //  1. CONFIGURAÇÕES INICIAIS
     // =========================================================
-    AOS.init({ duration: 900, once: true, easing: 'ease-out-cubic', offset: 60 });
+    AOS.init({ duration: 900, once: true, easing: 'ease-out', offset: 60 });
 
     // Header glassmorphism no scroll
     const header = document.querySelector('header');
@@ -90,7 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('img').forEach(img => {
         if (img.complete) { img.classList.add('loaded'); return; }
         img.addEventListener('load', () => img.classList.add('loaded'));
-        img.setAttribute('loading', 'lazy');
+        if (!img.classList.contains('hero-bg') && !img.closest('.hero-section'))
+            img.setAttribute('loading', 'lazy');
     });
 
     // =========================================================
