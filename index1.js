@@ -490,21 +490,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 formReg.reset();
                 toggleAuth(false);
 
+                const _mostrarSucessoCadastro = (userObj) => {
+                    const nomeExib = nome ? `${nome} ${sobrenome || ''}`.trim() : email.split('@')[0];
+                    Swal.fire({
+                        icon: 'success',
+                        title: '🎖️ Conta Criada!',
+                        html: `
+                            <div style="text-align:left;line-height:1.8;font-size:15px;">
+                                <p style="margin:0 0 10px;font-size:17px;font-weight:600;color:#c9a84c;">
+                                    Bem-vindo(a), ${nomeExib}!
+                                </p>
+                                <p style="margin:0 0 6px;opacity:.85;">Sua conta foi criada com sucesso no sistema GuardPets.</p>
+                                <div style="background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.35);border-radius:8px;padding:10px 14px;margin-top:12px;">
+                                    <span style="color:#c9a84c;font-weight:600;">📧 Email cadastrado:</span><br>
+                                    <span style="font-family:monospace;font-size:14px;">${email}</span>
+                                </div>
+                                <div style="margin-top:10px;font-size:13px;opacity:.7;">Especialidade: <b>${especialidade}</b></div>
+                            </div>`,
+                        confirmButtonText: 'Entrar no Sistema →',
+                        confirmButtonColor: '#c9a84c',
+                        background: '#1a1a2e',
+                        color: '#e8e8e8',
+                        customClass: { popup: 'swal-guardpets' }
+                    });
+                };
+
                 // Se o Supabase retornou sessão direto (confirmação desativada), loga já
                 if (data.access_token) {
                     localStorage.setItem('gp_supa_token', data.access_token);
                     mostrarPerfilAgente(data.user || { email, user_metadata: { nome, sobrenome, especialidade } });
-                    GerenciadorEventos.exibirToast('🎖️ Conta Criada!', `Bem-vindo(a), <strong>${nome || email}</strong>!`, 'sucesso');
+                    _mostrarSucessoCadastro(data.user);
                 } else {
                     // Tenta login automático
                     const login = await supaSignIn(email, senha);
                     if (login.access_token) {
                         localStorage.setItem('gp_supa_token', login.access_token);
                         mostrarPerfilAgente(login.user || { email, user_metadata: { nome, sobrenome, especialidade } });
-                        GerenciadorEventos.exibirToast('🎖️ Conta Criada!', `Bem-vindo(a), <strong>${nome || email}</strong>!`, 'sucesso');
+                        _mostrarSucessoCadastro(login.user);
                     } else {
-                        GerenciadorEventos.exibirToast('✅ Conta criada!', 'Faça login para entrar.', 'sucesso');
-                        setTimeout(() => { switchAuth('login'); toggleAuth(true); }, 800);
+                        Swal.fire({
+                            icon: 'success',
+                            title: '✅ Conta criada!',
+                            html: `Sua conta foi registrada.<br><b style="color:#c9a84c;">${email}</b><br><br>Faça login para entrar.`,
+                            confirmButtonColor: '#c9a84c',
+                            background: '#1a1a2e',
+                            color: '#e8e8e8'
+                        }).then(() => { switchAuth('login'); toggleAuth(true); });
                     }
                 }
 
@@ -550,10 +581,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('gp_supa_token', data.access_token);
                 const user = data.user || {};
                 mostrarPerfilAgente(user);
-
-                GerenciadorEventos.exibirToast('🎖️ Acesso Concedido', 'Bem-vindo(a) de volta!', 'sucesso');
                 toggleAuth(false);
                 formLogin.reset();
+
+                const metaLogin   = user.user_metadata || {};
+                const nomeLogin   = metaLogin.nome ? `${metaLogin.nome} ${metaLogin.sobrenome || ''}`.trim() : (user.email || email).split('@')[0];
+                const emailLogin  = user.email || email;
+                const espLogin    = metaLogin.especialidade || 'Agente';
+                const membroDesde = user.created_at
+                    ? new Date(user.created_at).toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' })
+                    : '—';
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '🐾 Acesso Concedido!',
+                    html: `
+                        <div style="text-align:left;line-height:1.8;font-size:15px;">
+                            <p style="margin:0 0 10px;font-size:17px;font-weight:600;color:#c9a84c;">
+                                Bem-vindo(a) de volta, ${nomeLogin}!
+                            </p>
+                            <div style="background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.35);border-radius:8px;padding:10px 14px;margin-top:6px;">
+                                <span style="color:#c9a84c;font-weight:600;">📧 Conectado como:</span><br>
+                                <span style="font-family:monospace;font-size:14px;">${emailLogin}</span>
+                            </div>
+                            <div style="margin-top:10px;font-size:13px;opacity:.7;">
+                                Especialidade: <b>${espLogin}</b> &nbsp;|&nbsp; Membro desde: <b>${membroDesde}</b>
+                            </div>
+                        </div>`,
+                    confirmButtonText: 'Continuar →',
+                    confirmButtonColor: '#c9a84c',
+                    background: '#1a1a2e',
+                    color: '#e8e8e8',
+                    timer: 5000,
+                    timerProgressBar: true
+                });
 
             } catch (err) {
                 Swal.fire('Erro', 'Não foi possível realizar o login.', 'error');
