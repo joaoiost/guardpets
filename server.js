@@ -53,13 +53,32 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Middleware de autenticação JWT
-function autenticar(req, res, next) {
+// Middleware de autenticação — verifica token do Supabase Auth
+async function autenticar(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.status(401).json({ error: 'Token não fornecido' });
 
-    if (!JWT_SECRET) return res.status(500).json({ error: 'Servidor não configurado' });
+    const supaUrl = process.env.SUPABASE_URL;
+    const supaKey = process.env.SUPABASE_ANON_KEY;
+
+    if (supaUrl && supaKey) {
+        try {
+            const resp = await fetch(`${supaUrl}/auth/v1/user`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'apikey': supaKey
+                }
+            });
+            if (resp.ok) {
+                const user = await resp.json();
+                req.usuario = { id: user.id, email: user.email, tipo: 'usuario' };
+                return next();
+            }
+        } catch (_) { /* prosseguir para fallback */ }
+    }
+
+    // Fallback: JWT local (compatibilidade durante transição)
     jwt.verify(token, JWT_SECRET, (err, payload) => {
         if (err) return res.status(403).json({ error: 'Token inválido ou expirado' });
         req.usuario = payload;

@@ -1610,6 +1610,148 @@ input.invalid {
 /* Footer override — substitui o estilo antigo simples */
 footer { opacity: 1 !important; text-align: left !important; padding: 0 0 30px !important; }
 
+/* =========================================================
+   PERFIL DROPDOWN — header do agente logado
+========================================================= */
+.perfil-trigger {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+.perfil-trigger:hover { background: rgba(255,255,255,0.08); }
+
+.perfil-avatar-mini {
+    width: 32px; height: 32px;
+    background: var(--p-gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 0.72rem;
+    color: var(--p-dark);
+    flex-shrink: 0;
+}
+
+#nav-agente-nome {
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.perfil-dropdown-card {
+    position: absolute;
+    top: calc(100% + 14px);
+    right: 0;
+    width: 290px;
+    background: #0f1012;
+    border: 1px solid rgba(197,166,102,0.2);
+    border-radius: 16px;
+    padding: 20px;
+    z-index: 9100;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    animation: fadeSlideIn 0.18s ease;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity:0; transform:translateY(-8px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+
+.pd-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.pd-avatar {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--p-gold), #8e733e);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--p-dark);
+    flex-shrink: 0;
+}
+
+.pd-nome {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: #fff;
+    font-size: 0.88rem;
+    margin-bottom: 3px;
+}
+
+.pd-email {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.38);
+    margin-bottom: 5px;
+    word-break: break-all;
+}
+
+.pd-role {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--p-gold);
+    background: rgba(197,166,102,0.1);
+    border: 1px solid rgba(197,166,102,0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.pd-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 12px 0;
+}
+
+.pd-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.65);
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 2px;
+}
+.pd-btn:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.pd-btn i { color: var(--p-gold); width: 16px; text-align: center; }
+.pd-btn-sair:hover { background: rgba(231,76,60,0.1); color: #e74c3c; }
+.pd-btn-sair i { color: #e74c3c; }
+
+.pd-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9099;
+}
+
 
 /* =========================================================
    BOTTOM NAV — MOBILE ONLY

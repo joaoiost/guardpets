@@ -1,3 +1,8 @@
+// ─── Supabase Auth ────────────────────────────────────────────────────────────
+const _SUPA_URL = 'https://uwlxknmpsurlyljrajbr.supabase.co';
+const _SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3bHhrbm1wc3VybHlqbHJhamJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NDM1MzUsImV4cCI6MjA5NjUxOTUzNX0.o_FnYF843XupwK9xx2KTx7IKdj5S1hHJhKoKE0shBAY';
+const supabaseClient = supabase.createClient(_SUPA_URL, _SUPA_KEY);
+
 /**
  * =============================================================
  *  index1.js — Lógica Principal do Guard Pets
@@ -392,25 +397,23 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled  = true;
 
             try {
-                const nome         = formReg.querySelector('input[name="nome"]')?.value         || '';
-                const sobrenome    = formReg.querySelector('input[name="sobrenome"]')?.value    || '';
-                const cpf          = formReg.querySelector('input[name="cpf"]')?.value          || '';
-                const email        = formReg.querySelector('input[name="email"]')?.value        || '';
-                const especialidade = formReg.querySelector('select[name="especialidade"]')?.value || '';
-                const senha        = formReg.querySelector('input[name="senha"]')?.value        || '';
+                const nome          = formReg.querySelector('input[name="nome"]')?.value          || '';
+                const sobrenome     = formReg.querySelector('input[name="sobrenome"]')?.value     || '';
+                const email         = formReg.querySelector('input[name="email"]')?.value         || '';
+                const especialidade = formReg.querySelector('select[name="especialidade"]')?.value || 'Agente';
+                const senha         = formReg.querySelector('input[name="senha"]')?.value         || '';
 
-                const resp = await fetch('/register', {
-                    method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({ nome, sobrenome, cpf, email, especialidade, senha }),
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email,
+                    password: senha,
+                    options: {
+                        emailRedirectTo: 'https://guardpets.vercel.app',
+                        data: { nome, sobrenome, especialidade }
+                    }
                 });
-                const data = await resp.json();
 
-                if (!resp.ok) {
-                    const msg = resp.status === 503
-                        ? 'Banco de dados não conectado. Verifique a configuração do servidor.'
-                        : data.error || 'Não foi possível criar a conta.';
-                    Swal.fire('Erro no Cadastro', msg, 'error');
+                if (error) {
+                    Swal.fire('Erro no Cadastro', error.message, 'error');
                     return;
                 }
 
@@ -418,9 +421,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 GerenciadorEventos.notificar('novo_usuario', { nome, email });
 
                 Swal.fire({
-                    title:              'CONTA CRIADA!',
-                    text:               'Sua conta foi criada com sucesso!',
-                    icon:               'success',
+                    title:             'CONFIRME SEU EMAIL! 📧',
+                    html:              `Enviamos um link de confirmação para <strong>${email}</strong>.<br><br>Verifique sua caixa de entrada (e spam) e clique no link para ativar sua conta.`,
+                    icon:              'success',
                     confirmButtonColor: '#c5a666',
                 });
 
@@ -455,28 +458,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 const email = formLogin.querySelector('input[name="email"]')?.value || '';
                 const senha = formLogin.querySelector('input[name="senha"]')?.value || '';
 
-                const resp = await fetch('/login', {
-                    method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({ email, senha }),
-                });
-                const data = await resp.json();
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: senha });
 
-                if (!resp.ok) {
-                    const msg = resp.status === 503
-                        ? 'Banco de dados não conectado. Verifique a configuração do servidor.'
-                        : data.error || 'Credenciais inválidas.';
+                if (error) {
+                    let msg = error.message;
+                    if (msg.includes('Email not confirmed'))
+                        msg = 'Email ainda não confirmado. Verifique sua caixa de entrada e clique no link de ativação.';
+                    else if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials'))
+                        msg = 'Email ou senha incorretos.';
                     Swal.fire('Acesso Negado', msg, 'error');
                     return;
                 }
 
-                localStorage.setItem('gp_token',   data.token);
-                localStorage.setItem('gp_usuario', JSON.stringify(data.usuario));
-                atualizarNavAgente(data.usuario);
-
                 GerenciadorEventos.exibirToast(
                     '🎖️ Acesso Concedido',
-                    `Bem-vindo(a) de volta, <strong>${data.usuario.nome}</strong>!`,
+                    `Bem-vindo(a) de volta!`,
                     'sucesso'
                 );
                 toggleAuth(false);
@@ -607,36 +603,77 @@ document.addEventListener('DOMContentLoaded', () => {
     //  PAINEL DO AGENTE
     // =========================================================
 
-    // Checar se já está logado ao carregar
-    (function checarSessao() {
-        const usuario = JSON.parse(localStorage.getItem('gp_usuario') || 'null');
-        if (usuario) atualizarNavAgente(usuario);
-    })();
+    // ── Supabase: checar sessão existente ao carregar ──────────────────────────
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) mostrarPerfilAgente(session.user);
+    });
 
-    function atualizarNavAgente(usuario) {
-        const btnPortal = document.getElementById('nav-btn-portal');
-        const infoNav   = document.getElementById('nav-agente-info');
-        const nomeNav   = document.getElementById('nav-agente-nome');
-        if (btnPortal) btnPortal.style.display = 'none';
-        if (infoNav)  { infoNav.style.display = 'flex'; infoNav.classList.add('visible'); }
-        if (nomeNav)  nomeNav.textContent = '👤 ' + (usuario.nome || usuario.email);
+    // ── Supabase: ouvir mudanças de estado (login / logout / confirmação) ─────
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (session?.user) {
+            mostrarPerfilAgente(session.user);
+            if (event === 'SIGNED_IN') toggleAuth(false);
+        } else {
+            esconderPerfilAgente();
+        }
+    });
+
+    function _iniciais(nome) {
+        return (nome || '?').split(' ').map(p => p[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
     }
 
-    window.fazerLogout = () => {
-        localStorage.removeItem('gp_token');
+    function mostrarPerfilAgente(user) {
+        const meta    = user.user_metadata || {};
+        const nome    = meta.nome ? `${meta.nome} ${meta.sobrenome || ''}`.trim() : user.email.split('@')[0];
+        const iniciais = _iniciais(nome);
+
+        const wrapper   = document.getElementById('perfil-dropdown-wrapper');
+        const portal    = document.getElementById('nav-btn-portal');
+        const nomeNav   = document.getElementById('nav-agente-nome');
+        const miniAv    = document.getElementById('perfil-avatar-mini');
+
+        if (wrapper)  { wrapper.style.display = 'flex'; }
+        if (portal)   portal.style.display = 'none';
+        if (nomeNav)  nomeNav.textContent = nome;
+        if (miniAv)   miniAv.textContent  = iniciais;
+
+        const pdAvatar = document.getElementById('pd-avatar');
+        const pdNome   = document.getElementById('pd-nome');
+        const pdEmail  = document.getElementById('pd-email');
+        const pdRole   = document.getElementById('pd-role');
+        if (pdAvatar) pdAvatar.textContent = iniciais;
+        if (pdNome)   pdNome.textContent   = nome;
+        if (pdEmail)  pdEmail.textContent  = user.email;
+        if (pdRole)   pdRole.textContent   = meta.especialidade || 'Agente';
+
+        localStorage.setItem('gp_usuario', JSON.stringify({ id: user.id, nome, email: user.email }));
+    }
+
+    function esconderPerfilAgente() {
+        const wrapper = document.getElementById('perfil-dropdown-wrapper');
+        const portal  = document.getElementById('nav-btn-portal');
+        if (wrapper) wrapper.style.display = 'none';
+        if (portal)  portal.style.display  = '';
         localStorage.removeItem('gp_usuario');
-        const btnPortal = document.getElementById('nav-btn-portal');
-        const infoNav   = document.getElementById('nav-agente-info');
-        if (btnPortal) btnPortal.style.display = '';
-        if (infoNav)  infoNav.classList.remove('visible');
-        GerenciadorEventos.exibirToast('Até logo!', 'Sessão encerrada com sucesso.', 'info');
+        localStorage.removeItem('gp_token');
+    }
+
+    window.togglePerfilDropdown = (forceClose) => {
+        const dropdown = document.getElementById('perfil-dropdown');
+        const overlay  = document.getElementById('pd-overlay');
+        if (!dropdown) return;
+        const aberto    = dropdown.style.display !== 'none';
+        const fechar    = forceClose === false || aberto;
+        dropdown.style.display = fechar ? 'none' : 'block';
+        if (overlay) overlay.style.display = fechar ? 'none' : 'block';
     };
 
-    // Patch: após login bem-sucedido, atualizar nav
-    const _loginOriginal = document.getElementById('form-login');
-    if (_loginOriginal) {
-        _loginOriginal.addEventListener('gp:login', (e) => atualizarNavAgente(e.detail));
-    }
+    window.fazerLogout = async () => {
+        await supabaseClient.auth.signOut();
+        togglePerfilDropdown(false);
+        esconderPerfilAgente();
+        GerenciadorEventos.exibirToast('Até logo!', 'Sessão encerrada com sucesso.', 'info');
+    };
 
     window.abrirPainel = () => {
         const usuario = JSON.parse(localStorage.getItem('gp_usuario') || 'null');

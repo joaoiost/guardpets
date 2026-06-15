@@ -43,11 +43,27 @@
             <a href="#voluntariado">Voluntariado</a>
             <a href="#mapa">Mapa</a>
             <a href="#doacao">Doação</a>
-            <span id="nav-agente-info" style="display:none; align-items:center; gap:15px;">
-                <span id="nav-agente-nome" style="color:var(--p-gold); font-size:0.75rem; font-weight:700;"></span>
-                <button onclick="abrirPainel()" class="nav-links btn-agent" style="border:none; cursor:pointer;">PAINEL</button>
-                <button onclick="fazerLogout()" style="background:none; border:none; color:rgba(255,255,255,0.5); font-size:0.75rem; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px;">SAIR</button>
-            </span>
+            <div id="perfil-dropdown-wrapper" style="display:none; position:relative; align-items:center;">
+                <button class="perfil-trigger" onclick="togglePerfilDropdown()" id="perfil-trigger-btn">
+                    <div class="perfil-avatar-mini" id="perfil-avatar-mini"></div>
+                    <span id="nav-agente-nome"></span>
+                    <i class="fas fa-chevron-down" style="font-size:0.55rem;margin-left:2px;opacity:0.5;"></i>
+                </button>
+                <div id="perfil-dropdown" class="perfil-dropdown-card" style="display:none;">
+                    <div class="pd-header">
+                        <div class="pd-avatar" id="pd-avatar"></div>
+                        <div>
+                            <div class="pd-nome" id="pd-nome"></div>
+                            <div class="pd-email" id="pd-email"></div>
+                            <div class="pd-role" id="pd-role"></div>
+                        </div>
+                    </div>
+                    <div class="pd-divider"></div>
+                    <button class="pd-btn" onclick="abrirPainel(); togglePerfilDropdown(false)"><i class="fas fa-satellite-dish"></i> Painel do Agente</button>
+                    <button class="pd-btn pd-btn-sair" onclick="fazerLogout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+                </div>
+            </div>
+            <div class="pd-overlay" id="pd-overlay" onclick="togglePerfilDropdown(false)" style="display:none;"></div>
             <button id="nav-btn-portal" onclick="toggleAuth(true)" class="nav-links btn-agent" style="border:none; cursor:pointer;">PORTAL DO AGENTE</button>
         </nav>
     </div>
@@ -873,6 +889,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/patterns/singleton.js"></script>
 <script src="js/patterns/factory.js"></script>
 <script src="js/patterns/observer.js"></script>
