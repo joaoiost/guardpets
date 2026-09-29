@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).addTo(mapa);
 
         const icone = L.divIcon({
-            html: '<div style="background:#c5a666; width:14px; height:14px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 8px rgba(197,166,102,0.8);"></div>',
+            html: '<div style="background:#c5a666; width:14px; height:14px; border-radius:50%; border:3px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>',
             className: '',
             iconSize: [14, 14],
         });
