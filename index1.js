@@ -168,9 +168,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function carregarAnimais() {
         try {
-            const resp = await fetch('/animais');
+            // limite alto pra vitrine pública mostrar todo mundo numa página só;
+            // a API aceita ?pagina=&limite= pra quem quiser paginação de verdade.
+            const resp = await fetch('/animais?limite=100');
             if (!resp.ok) return;
-            const animais = await resp.json();
+            const { dados: animais } = await resp.json();
             if (!Array.isArray(animais) || !animais.length) return;
 
             const grid = document.getElementById('pet-grid');
@@ -366,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
             iconSize: [14, 14],
         });
 
-        fetch('/animais').then(r => r.ok ? r.json() : []).then(animais => {
+        fetch('/animais?limite=100').then(r => r.ok ? r.json() : { dados: [] }).then(({ dados: animais }) => {
             (animais || []).forEach(a => {
                 const coords = coordenadasPara(a.localizacao) || CENTRO_PADRAO;
                 L.marker(coords, { icon: icone })
@@ -1116,8 +1118,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let falhou  = false;
         const token = localStorage.getItem('gp_supa_token');
         try {
-            const resp = await fetch('/adocoes', { headers: { 'Authorization': `Bearer ${token}` } });
-            if (resp.ok) adocoes = await resp.json();
+            const resp = await fetch('/adocoes?limite=100', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (resp.ok) ({ dados: adocoes } = await resp.json());
             else falhou = true;
         } catch (_) { falhou = true; }
 
@@ -1268,10 +1270,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const [rOcs, rAgs] = await Promise.all([
                 fetch('/ocorrencias', { headers: { 'Authorization': `Bearer ${token}` } }),
-                fetch('/adocoes',     { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch('/adocoes?limite=100', { headers: { 'Authorization': `Bearer ${token}` } }),
             ]);
             if (rOcs.ok) ocs = await rOcs.json();
-            if (rAgs.ok) ags = await rAgs.json();
+            if (rAgs.ok) ({ dados: ags } = await rAgs.json());
         } catch (_) { /* mantém fallback do localStorage para ocorrências */ }
 
         setEl('ps-total',    ocs.length);

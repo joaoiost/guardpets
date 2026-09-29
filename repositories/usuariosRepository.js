@@ -4,9 +4,14 @@ const db = require('../db/pool');
 const CAMPOS_PUBLICOS = 'id,nome,sobrenome,cpf,email,telefone,especialidade,tipo,ativo,criado_em';
 
 module.exports = {
-    async listar() {
-        const { rows } = await db.query(`SELECT ${CAMPOS_PUBLICOS} FROM usuarios`);
-        return rows;
+    async listar({ pagina = 1, limite = 12 } = {}) {
+        const totalResp = await db.query('SELECT COUNT(*)::int AS total FROM usuarios');
+        const offset = (Math.max(1, pagina) - 1) * limite;
+        const { rows } = await db.query(
+            `SELECT ${CAMPOS_PUBLICOS} FROM usuarios ORDER BY id LIMIT $1 OFFSET $2`,
+            [limite, offset]
+        );
+        return { dados: rows, total: totalResp.rows[0].total };
     },
 
     async buscarPorId(id) {

@@ -2,26 +2,32 @@
 const db = require('../db/pool');
 
 module.exports = {
-    async listarPorUsuario(idUsuario) {
+    async listarPorUsuario(idUsuario, { pagina = 1, limite = 12 } = {}) {
+        const totalResp = await db.query('SELECT COUNT(*)::int AS total FROM adocoes WHERE id_usuario=$1', [idUsuario]);
+        const offset = (Math.max(1, pagina) - 1) * limite;
         const { rows } = await db.query(
             `SELECT a.*, an.nome AS animal_nome, an.foto_url AS animal_foto
              FROM adocoes a LEFT JOIN animais an ON an.id = a.id_animal
-             WHERE a.id_usuario=$1 ORDER BY a.data_solicitacao DESC`,
-            [idUsuario]
+             WHERE a.id_usuario=$1 ORDER BY a.data_solicitacao DESC LIMIT $2 OFFSET $3`,
+            [idUsuario, limite, offset]
         );
-        return rows;
+        return { dados: rows, total: totalResp.rows[0].total };
     },
 
-    async listarTodas() {
+    // JOIN com 3 tabelas (adocoes + animais + usuarios), paginado.
+    async listarTodas({ pagina = 1, limite = 12 } = {}) {
+        const totalResp = await db.query('SELECT COUNT(*)::int AS total FROM adocoes');
+        const offset = (Math.max(1, pagina) - 1) * limite;
         const { rows } = await db.query(
             `SELECT a.*, an.nome AS animal_nome, an.foto_url AS animal_foto,
                     u.nome AS usuario_nome, u.email AS usuario_email
              FROM adocoes a
              LEFT JOIN animais an  ON an.id = a.id_animal
              LEFT JOIN usuarios u  ON u.id  = a.id_usuario
-             ORDER BY a.data_solicitacao DESC`
+             ORDER BY a.data_solicitacao DESC LIMIT $1 OFFSET $2`,
+            [limite, offset]
         );
-        return rows;
+        return { dados: rows, total: totalResp.rows[0].total };
     },
 
     async buscarPorId(id) {

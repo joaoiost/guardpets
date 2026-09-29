@@ -2,7 +2,9 @@
 const db = require('../db/pool');
 
 module.exports = {
-    async listar({ especie, porte, idade, localizacao } = {}) {
+    // Consulta com filtros dinâmicos + paginação (LIMIT/OFFSET). `total` vem
+    // de uma segunda query (COUNT) pra montar a paginação certa no service.
+    async listar({ especie, porte, idade, localizacao, pagina = 1, limite = 12 } = {}) {
         const condicoes = [];
         const valores = [];
         if (especie)     { valores.push(especie);          condicoes.push(`especie ILIKE $${valores.length}`); }
@@ -11,8 +13,14 @@ module.exports = {
         if (localizacao) { valores.push(`%${localizacao}%`); condicoes.push(`localizacao ILIKE $${valores.length}`); }
 
         const where = condicoes.length ? `WHERE ${condicoes.join(' AND ')}` : '';
-        const { rows } = await db.query(`SELECT * FROM animais ${where} ORDER BY created_at DESC`, valores);
-        return rows;
+
+        const totalResp = await db.query(`SELECT COUNT(*)::int AS total FROM animais ${where}`, valores);
+        const offset = (Math.max(1, pagina) - 1) * limite;
+        const { rows } = await db.query(
+            `SELECT * FROM animais ${where} ORDER BY created_at DESC LIMIT $${valores.length + 1} OFFSET $${valores.length + 2}`,
+            [...valores, limite, offset]
+        );
+        return { dados: rows, total: totalResp.rows[0].total };
     },
 
     async buscarPorId(id) {

@@ -29,8 +29,10 @@ module.exports = {
         return adocao;
     },
 
-    listarPara(usuario) {
-        return usuario.tipo === 'admin' ? repo.listarTodas() : repo.listarPorUsuario(usuario.id);
+    listarPara(usuario, paginacao) {
+        return usuario.tipo === 'admin'
+            ? repo.listarTodas(paginacao)
+            : repo.listarPorUsuario(usuario.id, paginacao);
     },
 
     async atualizarStatus(id, novoStatus) {

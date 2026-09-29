@@ -8,6 +8,7 @@ const usuariosRepo    = require('./repositories/usuariosRepository');
 const voluntariosRepo = require('./repositories/voluntariosRepository');
 const animaisService  = require('./services/animaisService');
 const adocoesService  = require('./services/adocoesService');
+const { parsePaginacao, montarResposta } = require('./utils/paginacao');
 
 const app        = express();
 const PORT       = process.env.PORT || 3000;
@@ -151,7 +152,9 @@ app.get('/me', autenticar, (req, res) => res.json(req.usuario));
 
 app.get('/usuarios', autenticar, async (req, res) => {
     try {
-        res.json(await usuariosRepo.listar());
+        const { pagina, limite } = parsePaginacao(req.query);
+        const { dados, total } = await usuariosRepo.listar({ pagina, limite });
+        res.json(montarResposta(dados, total, pagina, limite));
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -190,7 +193,9 @@ app.get('/animais', async (req, res) => {
     if (!checarBanco(res)) return;
     try {
         const { especie, porte, idade, localizacao } = req.query;
-        res.json(await animaisService.listar({ especie, porte, idade, localizacao }));
+        const { pagina, limite } = parsePaginacao(req.query);
+        const { dados, total } = await animaisService.listar({ especie, porte, idade, localizacao, pagina, limite });
+        res.json(montarResposta(dados, total, pagina, limite));
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -247,7 +252,9 @@ app.post('/adocoes', tentarAutenticar, async (req, res) => {
 app.get('/adocoes', autenticar, async (req, res) => {
     if (!checarBanco(res)) return;
     try {
-        res.json(await adocoesService.listarPara(req.usuario));
+        const { pagina, limite } = parsePaginacao(req.query);
+        const { dados, total } = await adocoesService.listarPara(req.usuario, { pagina, limite });
+        res.json(montarResposta(dados, total, pagina, limite));
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
