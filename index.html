@@ -869,6 +869,10 @@
                 </div>
                 <input type="text" name="cpf" placeholder="CPF ou Registro (OAB/CRMV)" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                 <input type="text" name="telefone" placeholder="WhatsApp / Telefone" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
+                <div class="form-grid" style="gap:10px;">
+                    <input type="text" name="cep" id="reg-cep" placeholder="CEP" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
+                    <input type="text" name="cidade" id="reg-cidade" placeholder="Cidade / UF" readonly style="color:#333; background:#f9f9f9; font-size:0.8rem;">
+                </div>
                 <input type="email" name="email" placeholder="E-mail para Validação" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                 <select name="especialidade" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                     <option value="Resgate">Especialidade: Resgate</option>
@@ -907,6 +911,16 @@
                         <option value="apto">Apartamento (Com redes)</option>
                         <option value="sitio">Sítio/Fazenda</option>
                     </select>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div>
+                    <label>CEP</label>
+                    <input type="text" id="adopt-cep" placeholder="00000-000" required class="check-ready">
+                </div>
+                <div>
+                    <label>Cidade / UF</label>
+                    <input type="text" id="adopt-cidade" placeholder="Preenchido pelo CEP" readonly>
                 </div>
             </div>
             <div style="margin-bottom:20px;">

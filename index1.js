@@ -391,18 +391,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const maskOptions = {
         cpf:   { mask: '000.000.000-00' },
         phone: { mask: '(00) 00000-0000' },
-        nome:  { mask: /^[a-zA-ZÀ-ÿ\s]*$/ }
+        nome:  { mask: /^[a-zA-ZÀ-ÿ\s]*$/ },
+        cep:   { mask: '00000-000' },
     };
 
     const elCpf          = document.querySelector('input[name="cpf"]');
     const elPhoneReg     = document.querySelector('#form-reg input[name="telefone"]');
     const elPhoneAdopt   = document.getElementById('adopt-phone');
     const elNomeDenuncia = document.getElementById('denuncia-nome');
+    const elCepReg       = document.getElementById('reg-cep');
+    const elCepAdopt     = document.getElementById('adopt-cep');
 
     if (elCpf)          IMask(elCpf, maskOptions.cpf);
     if (elPhoneReg)     IMask(elPhoneReg, maskOptions.phone);
     if (elPhoneAdopt)   IMask(elPhoneAdopt, maskOptions.phone);
     if (elNomeDenuncia) IMask(elNomeDenuncia, maskOptions.nome);
+    if (elCepReg)        IMask(elCepReg, maskOptions.cep);
+    if (elCepAdopt)      IMask(elCepAdopt, maskOptions.cep);
+
+    // =========================================================
+    //  2b. BUSCA DE CEP (API ViaCEP) — autocompleta cidade/UF
+    // =========================================================
+    function ligarBuscaCep(inputCep, inputCidade) {
+        if (!inputCep) return;
+        inputCep.addEventListener('blur', async () => {
+            const cep = inputCep.value.replace(/\D/g, '');
+            if (cep.length !== 8) return;
+
+            try {
+                const resp  = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const dados = await resp.json();
+                if (dados.erro) {
+                    if (inputCidade) inputCidade.value = '';
+                    inputCep.style.borderColor = 'var(--danger)';
+                    return;
+                }
+                inputCep.style.borderColor = '#27ae60';
+                if (inputCidade) inputCidade.value = `${dados.localidade} / ${dados.uf}`;
+            } catch (_) { /* API de CEP fora do ar — segue sem preencher */ }
+        });
+    }
+
+    ligarBuscaCep(elCepReg,   document.getElementById('reg-cidade'));
+    ligarBuscaCep(elCepAdopt, document.getElementById('adopt-cidade'));
 
     // =========================================================
     //  3. FUNÇÕES AUXILIARES DE UI — mantidas do código original
@@ -778,11 +809,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const petNome  = modal?.dataset.petName || 'Animal';
                 const petId    = modal?.dataset.petId;
 
+                const tipoResidencia = formAdopt.querySelector('select')?.value || '';
+                const cepAdotante    = document.getElementById('adopt-cep')?.value || '';
+                const cidadeAdotante = document.getElementById('adopt-cidade')?.value || '';
+
                 const payload = {
                     idAnimal:   petId ? Number(petId) : null,
                     nome:       formAdopt.querySelector('input[type="text"]')?.value || '',
                     telefone:   document.getElementById('adopt-phone')?.value || '',
-                    residencia: formAdopt.querySelector('select')?.value      || '',
+                    residencia: [tipoResidencia, cidadeAdotante, cepAdotante].filter(Boolean).join(' — '),
                     motivacao:  formAdopt.querySelector('textarea')?.value    || '',
                 };
 
