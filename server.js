@@ -66,10 +66,6 @@ app.get('/health', (req, res) => {
     res.json({
         status: 'ok',
         db_configured: !!process.env.DATABASE_URL,
-        supabase_url_configured: !!process.env.SUPABASE_URL,
-        supabase_url_prefix: (process.env.SUPABASE_URL || '').slice(0, 20),
-        supabase_key_configured: !!process.env.SUPABASE_ANON_KEY,
-        supabase_key_length: (process.env.SUPABASE_ANON_KEY || '').length,
         env: process.env.VERCEL ? 'vercel' : 'local',
     });
 });
