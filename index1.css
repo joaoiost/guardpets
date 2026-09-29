@@ -133,6 +133,17 @@
             #nav-menu { display: none; flex-direction: column; width: 100%; background: rgba(10,11,12,0.97); padding: 20px; gap: 18px; border-top: 1px solid rgba(197,166,102,0.2); }
             #nav-menu.open { display: flex; }
             .nav-links a, .nav-links .btn-agent { width: 100%; text-align: center; }
+
+            /* Botões "Criar Conta" / "Login" (Home) ficavam espremidos numa
+               linha só dentro do menu mobile, por causa da div que os agrupa
+               ter display:flex fixo — força empilhar como o resto do menu. */
+            #nav-auth-buttons { flex-direction: column; width: 100%; gap: 10px !important; }
+            #nav-auth-buttons button { width: 100%; text-align: center; }
+
+            /* Mesma coisa pro bloco "nome do agente + Painel + Sair" que
+               aparece quando já está logado. */
+            #nav-agente-info { flex-direction: column; width: 100%; gap: 10px !important; }
+            #nav-agente-info button { width: 100%; text-align: center; }
         }
 
         @media (max-width: 1024px) {
