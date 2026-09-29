@@ -1,4 +1,4 @@
-const CACHE = 'guardpets-v3';
+const CACHE = 'guardpets-v4';
 // Nunca cacheia HTML — só assets estáticos
 const STATIC = ['/index1.css', '/index1.js'];
 
@@ -21,7 +21,7 @@ self.addEventListener('fetch', e => {
     const url = e.request.url;
     // Sempre vai para a rede: HTML, APIs e CDNs externos
     if (url.endsWith('/') || url.includes('.html') ||
-        /\/(login|register|denuncia|ocorrencias|health|agendamentos)/.test(url) ||
+        /\/(login|register|me|denuncia|ocorrencias|health|animais|adocoes|usuarios)/.test(url) ||
         !url.startsWith(self.location.origin)) return;
     e.respondWith(
         caches.match(e.request).then(cached => cached || fetch(e.request))

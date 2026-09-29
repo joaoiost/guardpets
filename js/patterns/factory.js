@@ -57,7 +57,7 @@ class EntidadeFactory {
     static criarUsuario(dados = {}) {
         const usuario = {
             id:           EntidadeFactory.#gerarId('usr'),
-            tipo:         'usuario',                         // Diferencia de admin
+            tipo:         'adotante',                        // Diferencia de admin
             nome:         (dados.nome || '').trim(),
             sobrenome:    (dados.sobrenome || '').trim(),
             cpf:          (dados.cpf || '').trim(),

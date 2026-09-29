@@ -1,6 +1,8 @@
 // ─── Supabase Auth (chamadas diretas — sem CDN) ───────────────────────────────
-const _SUPA_URL = 'https://uwlxknmpsurlyjlrajbr.supabase.co';
-const _SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3bHhrbm1wc3VybHlqbHJhamJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NDM1MzUsImV4cCI6MjA5NjUxOTUzNX0.o_FnYF843XupwK9xx2KTx7IKdj5S1hHJhKoKE0shBAY';
+// URL/key vêm de js/patterns/supabaseClient.js (carrega antes deste arquivo) —
+// fonte única, pra não ter a chave duplicada em dois arquivos.
+const _SUPA_URL = window.SUPABASE_URL;
+const _SUPA_KEY = window.SUPABASE_ANON_KEY;
 
 const _supaHeaders = { 'apikey': _SUPA_KEY, 'Content-Type': 'application/json' };
 
@@ -69,6 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const db = BancoDeDados.getInstance();
     console.log('[App] Banco de dados conectado:', db.resumo());
 
+    // Escapa texto vindo de usuário antes de jogar em innerHTML — animais,
+    // denúncias e solicitações de adoção são todos texto livre digitado por
+    // alguém e exibidos pra outras pessoas (inclusive o admin no painel).
+    function escapeHTML(str) {
+        return String(str ?? '').replace(/[&<>"']/g, (c) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+        }[c]));
+    }
+
     // =========================================================
     //  1. CONFIGURAÇÕES INICIAIS
     // =========================================================
@@ -122,6 +133,76 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
+    //  8b. ANIMAIS — carregados da API real (GET /animais).
+    //  Se a API não responder (banco não configurado), os cards
+    //  estáticos que já estão no HTML permanecem como estão.
+    // =========================================================
+    const SITUACAO_TAG_STYLE = {
+        'Resgatado':     'background:#e67e22;',
+        'Em Tratamento': 'background:#e67e22;',
+        'Urgente':       'background:var(--danger);',
+        'Reabilitado':   '',
+    };
+
+    const normalizarFiltro = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+    function cardAnimalHTML(a) {
+        const adotado  = a.status === 'adotado';
+        const btnStyle = adotado ? 'padding:12px;opacity:.5;cursor:not-allowed;' : 'padding:12px;';
+        const nome        = escapeHTML(a.nome || 'Sem nome');
+        const nomeAtributo = nome.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+        const btnAttrs = adotado ? 'disabled' : `onclick="toggleAdopt(true,${Number(a.id)},'${nomeAtributo}')"`;
+        const btnLabel = adotado ? 'JÁ ADOTADO' : 'SOLICITAR ADOÇÃO';
+
+        return `
+            <div class="pet-card" data-especie="${normalizarFiltro(a.especie)}" data-tamanho="${normalizarFiltro(a.porte)}" data-aos="fade-up">
+                <div class="pet-tag" style="${SITUACAO_TAG_STYLE[a.situacao] ?? ''}">${escapeHTML((a.situacao || 'Resgatado').toUpperCase())}</div>
+                <img src="${escapeHTML(a.foto_url || '/image/ICON.png')}" class="pet-img" alt="${nome}">
+                <div class="pet-info">
+                    <h3>${nome} <span style="color:#999; font-size:0.8rem; font-weight:400;">(${escapeHTML(a.raca || 'SRD')})</span></h3>
+                    <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">${escapeHTML(a.descricao || '')}</p>
+                    <button class="btn-full" style="${btnStyle}" ${btnAttrs}>${btnLabel}</button>
+                </div>
+            </div>`;
+    }
+
+    async function carregarAnimais() {
+        try {
+            const resp = await fetch('/animais');
+            if (!resp.ok) return;
+            const animais = await resp.json();
+            if (!Array.isArray(animais) || !animais.length) return;
+
+            const grid = document.getElementById('pet-grid');
+            if (grid) grid.innerHTML = animais.map(cardAnimalHTML).join('');
+
+            const totalBtn = document.querySelector('.filter-btn[data-filter="all"]');
+            if (totalBtn) totalBtn.textContent = `Todos (${animais.length})`;
+        } catch (_) { /* API indisponível — mantém os cards estáticos do HTML */ }
+    }
+    carregarAnimais();
+
+    // =========================================================
+    //  8c. ALERTAS EM TEMPO REAL — Supabase Realtime
+    //  [OBSERVER] → quando um animal é cadastrado/atualizado no
+    //  banco (por qualquer pessoa, em qualquer aba), todo mundo
+    //  vendo o site recebe o toast e a vitrine se atualiza sozinha.
+    // =========================================================
+    if (window.supabaseClient) {
+        window.supabaseClient
+            .channel('guardpets-animais')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'animais' }, (payload) => {
+                GerenciadorEventos.notificar('novo_animal', payload.new);
+                GerenciadorEventos.exibirToast('🐾 Novo Resgate!', `${payload.new.nome} acabou de entrar pra adoção.`, 'sucesso');
+                carregarAnimais();
+            })
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'animais' }, (payload) => {
+                if (payload.new.status !== payload.old.status) carregarAnimais();
+            })
+            .subscribe();
+    }
+
+    // =========================================================
     //  9. FILTRO DE ADOÇÃO
     // =========================================================
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -158,23 +239,48 @@ document.addEventListener('DOMContentLoaded', () => {
             const orig = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
             btn.disabled = true;
-            await new Promise(r => setTimeout(r, 1200));
-            Swal.fire({
-                title: 'CADASTRO RECEBIDO!',
-                html: 'Obrigado por querer fazer parte do Guard Pets!<br>Nossa equipe entrará em contato em breve.',
-                icon: 'success',
-                confirmButtonColor: '#c5a666',
-            });
-            formVol.reset();
-            btn.innerHTML = orig;
-            btn.disabled = false;
+
+            try {
+                const payload = {
+                    nome:     formVol.querySelector('[name="nome"]')?.value || '',
+                    telefone: formVol.querySelector('[name="telefone"]')?.value || '',
+                    tipo:     formVol.querySelector('[name="tipo"]')?.value || 'Outro',
+                    cidade:   formVol.querySelector('[name="cidade"]')?.value || '',
+                    mensagem: formVol.querySelector('[name="mensagem"]')?.value || '',
+                };
+
+                const resp = await fetch('/voluntarios', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify(payload),
+                });
+                const data = await resp.json();
+                if (!resp.ok) throw new Error(data.error || 'Não foi possível enviar o cadastro.');
+
+                Swal.fire({
+                    title: 'CADASTRO RECEBIDO!',
+                    html: 'Obrigado por querer fazer parte do Guard Pets!<br>Nossa equipe entrará em contato em breve.',
+                    icon: 'success',
+                    confirmButtonColor: '#c5a666',
+                });
+                formVol.reset();
+            } catch (err) {
+                Swal.fire('Erro', err.message || 'Não foi possível enviar o cadastro.', 'error');
+            } finally {
+                btn.innerHTML = orig;
+                btn.disabled = false;
+            }
         });
     }
 
     // =========================================================
     //  12. RASTREAMENTO DE PROTOCOLO
+    //  Consulta o banco de verdade (GET /ocorrencias/protocolo/:protocolo,
+    //  pública) — antes só olhava o localStorage do próprio navegador,
+    //  então não funcionava se a denúncia tivesse sido feita em outro
+    //  aparelho ou depois de limpar o cache.
     // =========================================================
-    window.rastrearProtocolo = () => {
+    window.rastrearProtocolo = async () => {
         const input = document.getElementById('input-protocolo');
         const resultado = document.getElementById('resultado-rastreamento');
         if (!input || !resultado) return;
@@ -185,10 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const ocorrencias = BancoDeDados.getInstance().getOcorrencias();
-        const oc = ocorrencias.find(o => o.protocolo === protocolo);
-
         resultado.style.display = 'block';
+        resultado.innerHTML = '<p style="opacity:0.6;"><i class="fas fa-spinner fa-spin"></i> Consultando...</p>';
 
         const statusLabels = {
             'Registrado': { cor: 'rgba(255,255,255,0.2)', texto: '📋 Registrado — aguardando triagem' },
@@ -198,9 +302,15 @@ document.addEventListener('DOMContentLoaded', () => {
             'Encaminhado para Adoção': { cor: '#c5a666', texto: '🏠 Encaminhado para Adoção' },
         };
 
+        let oc = null;
+        try {
+            const resp = await fetch(`/ocorrencias/protocolo/${encodeURIComponent(protocolo)}`);
+            if (resp.ok) oc = await resp.json();
+        } catch (_) { /* segue com oc = null */ }
+
         if (!oc) {
             resultado.innerHTML = `
-                <p class="resultado-protocolo">PROTOCOLO: ${protocolo}</p>
+                <p class="resultado-protocolo">PROTOCOLO: ${escapeHTML(protocolo)}</p>
                 <p style="color:#e74c3c; font-weight:700;">Protocolo não encontrado.</p>
                 <p style="font-size:0.8rem; opacity:0.6; margin-top:8px;">Verifique o número e tente novamente.</p>
             `;
@@ -209,50 +319,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const info = statusLabels[oc.status] || { cor: '#fff', texto: oc.status };
         resultado.innerHTML = `
-            <p class="resultado-protocolo">PROTOCOLO: ${oc.protocolo}</p>
-            <p class="resultado-tipo">${oc.tipo}</p>
-            <p class="resultado-local"><i class="fas fa-map-marker-alt"></i> ${oc.localizacao}</p>
+            <p class="resultado-protocolo">PROTOCOLO: ${escapeHTML(oc.protocolo)}</p>
+            <p class="resultado-tipo">${escapeHTML(oc.tipo)}</p>
+            <p class="resultado-local"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(oc.localizacao)}</p>
             <div style="background:${info.cor}22; border:1px solid ${info.cor}55; border-radius:10px; padding:12px 18px; display:inline-block;">
                 <span style="font-weight:700; color:${info.cor}; font-size:0.9rem;">${info.texto}</span>
             </div>
-            <p style="font-size:0.7rem; opacity:0.4; margin-top:15px;">Registrado em: ${new Date(oc.criadoEm || oc.id).toLocaleDateString('pt-BR')}</p>
+            <p style="font-size:0.7rem; opacity:0.4; margin-top:15px;">Registrado em: ${new Date(oc.criado_em).toLocaleDateString('pt-BR')}</p>
         `;
     };
 
     // =========================================================
-    //  13. MAPA DE OCORRÊNCIAS (Leaflet.js)
+    //  13. MAPA — animais resgatados, com dados reais da API.
+    //  (Antes mostrava 5 pontos fabricados que nunca mudavam;
+    //  a variável de ocorrências reais era buscada e nunca usada.)
+    //  Não mapeamos denúncias/ocorrências aqui de propósito — a
+    //  localização exata de uma denúncia em análise é sensível,
+    //  então só mostramos os animais já resgatados (dado público).
     // =========================================================
     const mapaEl = document.getElementById('mapa-leaflet');
     if (mapaEl && window.L) {
-        const mapa = L.map('mapa-leaflet', { zoomControl: true }).setView([-22.4634, -44.4500], 12);
+        const COORDENADAS_CIDADE = {
+            'resende':       [-22.4707, -44.4423],
+            'volta redonda': [-22.5231, -44.1042],
+            'itatiaia':      [-22.4889, -44.5636],
+        };
+        const CENTRO_PADRAO = [-22.4900, -44.3900]; // meio do Sul Fluminense
+
+        function coordenadasPara(localizacao) {
+            const chave = (localizacao || '').toLowerCase();
+            for (const cidade in COORDENADAS_CIDADE) {
+                if (chave.includes(cidade)) return COORDENADAS_CIDADE[cidade];
+            }
+            return null;
+        }
+
+        const mapa = L.map('mapa-leaflet', { zoomControl: true }).setView(CENTRO_PADRAO, 10);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap &copy; CARTO',
             maxZoom: 18,
         }).addTo(mapa);
 
         const icone = L.divIcon({
-            html: '<div style="background:#e74c3c; width:14px; height:14px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 8px rgba(231,76,60,0.8);"></div>',
+            html: '<div style="background:#c5a666; width:14px; height:14px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 8px rgba(197,166,102,0.8);"></div>',
             className: '',
             iconSize: [14, 14],
         });
 
-        // Marcadores de demonstração
-        const pontos = [
-            { lat: -22.4634, lng: -44.4500, tipo: 'Agressão Física', bairro: 'Centro, Resende' },
-            { lat: -22.4780, lng: -44.4620, tipo: 'Abandono', bairro: 'Jardim Primavera, Resende' },
-            { lat: -22.4510, lng: -44.4380, tipo: 'Envenenamento', bairro: 'Vila Isabel, Resende' },
-            { lat: -22.5120, lng: -44.1050, tipo: 'Abandono', bairro: 'Volta Redonda' },
-            { lat: -22.4020, lng: -44.5680, tipo: 'Agressão Física', bairro: 'Itatiaia' },
-        ];
-
-        // Adicionar ocorrências reais do localStorage
-        const ocorrs = BancoDeDados.getInstance().getOcorrencias();
-
-        pontos.forEach(p => {
-            L.marker([p.lat, p.lng], { icon: icone })
-                .addTo(mapa)
-                .bindPopup(`<b style="color:#e74c3c">${p.tipo}</b><br><small>${p.bairro}</small>`);
-        });
+        fetch('/animais').then(r => r.ok ? r.json() : []).then(animais => {
+            (animais || []).forEach(a => {
+                const coords = coordenadasPara(a.localizacao) || CENTRO_PADRAO;
+                L.marker(coords, { icon: icone })
+                    .addTo(mapa)
+                    .bindPopup(`<b style="color:#c5a666">${escapeHTML(a.nome)}</b><br><small>${escapeHTML(a.especie)} — ${escapeHTML(a.localizacao || 'Localização não informada')}</small>`);
+            });
+        }).catch(() => { /* API indisponível — mapa fica só com o mapa-base */ });
     }
 
 
@@ -325,12 +446,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('tab-reg').classList.toggle('active',   !isLogin);
     };
 
-    window.toggleAdopt = (show, petName = '') => {
+    window.toggleAdopt = (show, petIdOrName = '', petName) => {
         const modal = document.getElementById('adopt-modal');
         if (show) {
-            document.getElementById('target-pet-name').innerText = 'ANIMAL: ' + petName.toUpperCase();
-            // Armazena o nome do pet selecionado para uso no Factory ao submeter
-            modal.dataset.petName = petName;
+            // Compatibilidade: cards antigos chamam toggleAdopt(true, 'Nome') só com 2 args.
+            // Cards renderizados dinamicamente chamam toggleAdopt(true, id, 'Nome').
+            const temId  = petName !== undefined;
+            const petId  = temId ? petIdOrName : null;
+            const nome   = temId ? petName : petIdOrName;
+
+            document.getElementById('target-pet-name').innerText = 'ANIMAL: ' + nome.toUpperCase();
+            modal.dataset.petName = nome;
+            modal.dataset.petId   = petId ?? '';
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         } else {
@@ -468,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const nome          = formReg.querySelector('input[name="nome"]')?.value          || '';
                 const sobrenome     = formReg.querySelector('input[name="sobrenome"]')?.value     || '';
                 const email         = formReg.querySelector('input[name="email"]')?.value         || '';
-                const especialidade = formReg.querySelector('select[name="especialidade"]')?.value || 'Agente';
+                const especialidade = formReg.querySelector('select[name="especialidade"]')?.value || 'Membro';
                 const senha         = formReg.querySelector('input[name="senha"]')?.value         || '';
 
                 if (!email || !senha) {
@@ -587,7 +714,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const metaLogin   = user.user_metadata || {};
                 const nomeLogin   = metaLogin.nome ? `${metaLogin.nome} ${metaLogin.sobrenome || ''}`.trim() : (user.email || email).split('@')[0];
                 const emailLogin  = user.email || email;
-                const espLogin    = metaLogin.especialidade || 'Agente';
+                const espLogin    = metaLogin.especialidade || 'Membro';
                 const membroDesde = user.created_at
                     ? new Date(user.created_at).toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' })
                     : '—';
@@ -627,15 +754,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ---------------------------------------------------------
-    //  5d. FORMULÁRIO DE ADOÇÃO (PRONTUÁRIO)
-    //  [FACTORY]   → criarAgendamento() cria o objeto padronizado
-    //  [SINGLETON] → db.adicionarAgendamento() salva no localStorage
-    //  [OBSERVER]  → notificar('novo_agendamento') dispara o toast
+    //  5d. FORMULÁRIO DE ADOÇÃO
+    //  POST /adocoes — não exige login (é o primeiro contato de
+    //  quem quer adotar; se a pessoa estiver logada, a solicitação
+    //  fica vinculada à conta dela, mas isso é opcional).
+    //  [OBSERVER] → notificar('novo_agendamento') dispara o toast
     // ---------------------------------------------------------
     const formAdopt = document.getElementById('form-adopt');
     if (formAdopt) {
         formAdopt.addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const btn           = formAdopt.querySelector('button[type="submit"]');
             const textoOriginal  = btn.innerHTML;
 
@@ -643,39 +772,49 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled  = true;
 
             try {
-                await new Promise(res => setTimeout(res, 1500));
-
                 const modal    = document.getElementById('adopt-modal');
                 const petNome  = modal?.dataset.petName || 'Animal';
+                const petId    = modal?.dataset.petId;
 
-                // [FACTORY] — Cria agendamento com estrutura padronizada
-                const agendamento = EntidadeFactory.criarAgendamento({
-                    nomeAdotante: formAdopt.querySelector('input[type="text"]')?.value || '',
-                    telefone:     document.getElementById('adopt-phone')?.value       || '',
-                    residencia:   formAdopt.querySelector('select')?.value            || '',
-                    motivacao:    formAdopt.querySelector('textarea')?.value          || '',
-                    petNome,
+                const payload = {
+                    idAnimal:   petId ? Number(petId) : null,
+                    nome:       formAdopt.querySelector('input[type="text"]')?.value || '',
+                    telefone:   document.getElementById('adopt-phone')?.value || '',
+                    residencia: formAdopt.querySelector('select')?.value      || '',
+                    motivacao:  formAdopt.querySelector('textarea')?.value    || '',
+                };
+
+                if (!payload.idAnimal) throw new Error('Não foi possível identificar o animal. Recarregue a página e tente novamente.');
+
+                const token   = localStorage.getItem('gp_supa_token');
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                const resp = await fetch('/adocoes', {
+                    method:  'POST',
+                    headers,
+                    body:    JSON.stringify(payload),
                 });
+                const adocao = await resp.json();
+                if (!resp.ok) throw new Error(adocao.error || 'Não foi possível enviar a solicitação.');
 
-                // [SINGLETON] — Persiste agendamento
-                db.adicionarAgendamento(agendamento);
-
-                // [OBSERVER] — Notifica sobre novo agendamento
-                GerenciadorEventos.notificar('novo_agendamento', agendamento);
+                // [OBSERVER] — Notifica sobre a nova solicitação de adoção
+                GerenciadorEventos.notificar('novo_agendamento', { ...adocao, petNome });
 
                 Swal.fire({
                     title:              'SOLICITAÇÃO ENVIADA!',
                     html:               `Prontuário de <strong>${petNome}</strong> solicitado!<br>
-                                         Protocolo: <strong style="color:#c5a666">${agendamento.protocolo}</strong>`,
+                                         Protocolo: <strong style="color:#c5a666">${adocao.protocolo}</strong>`,
                     icon:               'success',
                     confirmButtonColor: '#c5a666',
                 });
 
                 formAdopt.reset();
                 toggleAdopt(false);
+                carregarAnimais(); // animal passa a aparecer como "em processo"
 
             } catch (err) {
-                Swal.fire('Erro', 'Não foi possível enviar a solicitação.', 'error');
+                Swal.fire('Erro', err.message || 'Não foi possível enviar a solicitação.', 'error');
                 console.error('[App] Erro ao solicitar prontuário:', err);
             } finally {
                 btn.innerHTML = textoOriginal;
@@ -773,7 +912,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return (nome || '?').split(' ').map(p => p[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
     }
 
-    function mostrarPerfilAgente(user) {
+    async function mostrarPerfilAgente(user) {
         const meta     = user.user_metadata || {};
         const nome     = meta.nome ? `${meta.nome} ${meta.sobrenome || ''}`.trim() : (user.email || '').split('@')[0];
         const iniciais = _iniciais(nome);
@@ -789,9 +928,33 @@ document.addEventListener('DOMContentLoaded', () => {
         set('pd-avatar', iniciais);
         set('pd-nome',   nome);
         set('pd-email',  user.email);
-        set('pd-role',   meta.especialidade || 'Agente');
+        set('pd-role',   meta.especialidade || 'Membro');
 
-        localStorage.setItem('gp_usuario',    JSON.stringify({ id: user.id, nome, email: user.email }));
+        // Busca no backend o id interno e o `tipo` (admin/adotante) reais —
+        // o token do Supabase, sozinho, não diz se a conta é admin. Se a
+        // primeira tentativa falhar (rede/DB com soluço), tenta mais uma vez
+        // antes de desistir — cair pra "adotante" à toa esconde o painel
+        // admin sem motivo real, e isso é exatamente o tipo de coisa que
+        // pareceria um bug de permissão no meio de uma demonstração.
+        const cache = JSON.parse(localStorage.getItem('gp_usuario') || 'null');
+        let id   = user.id;
+        let tipo = (cache && cache.email === user.email) ? cache.tipo : 'adotante';
+
+        const token = localStorage.getItem('gp_supa_token');
+        for (let tentativa = 0; tentativa < 2; tentativa++) {
+            try {
+                const resp = await fetch('/me', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (resp.ok) {
+                    const me = await resp.json();
+                    id   = me.id;
+                    tipo = me.tipo;
+                    break;
+                }
+            } catch (_) { /* tenta de novo (ou desiste, na segunda vez) */ }
+            if (tentativa === 0) await new Promise(r => setTimeout(r, 800));
+        }
+
+        localStorage.setItem('gp_usuario',    JSON.stringify({ id, nome, email: user.email, tipo }));
         localStorage.setItem('gp_supa_user',  JSON.stringify(user));
     }
 
@@ -816,10 +979,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
         set('pm-avatar',       iniciais);
-        set('pm-badge',        meta.especialidade || 'Agente');
+        set('pm-badge',        meta.especialidade || 'Membro');
         set('pm-nome',         nome);
         set('pm-email',        user.email || '');
-        set('pm-especialidade', meta.especialidade || 'Agente');
+        set('pm-especialidade', meta.especialidade || 'Membro');
         set('pm-desde',        desde);
         set('pm-email2',       user.email || '');
 
@@ -857,9 +1020,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const el = document.getElementById('painel-modal');
         const nomeEl = document.getElementById('painel-agente-nome');
-        if (nomeEl) nomeEl.textContent = usuario.email + ' — ' + (usuario.tipo || 'Agente');
+        if (nomeEl) nomeEl.textContent = usuario.email + ' — ' + (usuario.tipo || 'Membro');
         if (el) el.classList.add('active');
         document.body.style.overflow = 'hidden';
+
+        const tabCadastro = document.getElementById('tab-cadastro-animal');
+        if (tabCadastro) tabCadastro.style.display = usuario.tipo === 'admin' ? '' : 'none';
+
         carregarPainel();
     };
 
@@ -921,16 +1088,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="painel-denuncia-card">
                 <div class="pdc-header">
                     <div>
-                        <div class="pdc-protocolo">${oc.protocolo || 'SEM PROTOCOLO'}</div>
-                        <div class="pdc-tipo">${oc.tipo}</div>
-                        <div class="pdc-local"><i class="fas fa-map-marker-alt"></i> ${oc.localizacao}</div>
-                        <div class="pdc-nome">Denunciante: ${oc.nome_denunciante || oc.nome || 'Anônimo'}</div>
+                        <div class="pdc-protocolo">${escapeHTML(oc.protocolo || 'SEM PROTOCOLO')}</div>
+                        <div class="pdc-tipo">${escapeHTML(oc.tipo)}</div>
+                        <div class="pdc-local"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(oc.localizacao)}</div>
+                        <div class="pdc-nome">Denunciante: ${escapeHTML(oc.nome_denunciante || oc.nome || 'Anônimo')}</div>
                     </div>
                 </div>
-                <div class="pdc-relato">${oc.relato}</div>
+                <div class="pdc-relato">${escapeHTML(oc.relato)}</div>
                 <div class="pdc-footer">
                     <select class="pdc-status-select" id="status-sel-${i}">${statusOpts}</select>
-                    <button class="pdc-btn-atualizar" onclick="atualizarStatus('${oc.id}', 'status-sel-${i}')">
+                    <button class="pdc-btn-atualizar" onclick="atualizarStatus('${String(oc.id).replace(/'/g, '')}', 'status-sel-${i}')">
                         <i class="fas fa-save"></i> ATUALIZAR STATUS
                     </button>
                 </div>
@@ -938,39 +1105,175 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     }
 
-    function carregarAdocoes() {
+    async function carregarAdocoes() {
         const lista = document.getElementById('lista-adocoes');
         const badge = document.getElementById('badge-adocoes');
         if (!lista) return;
 
-        const agendamentos = db.getAgendamentos().reverse();
-        if (badge) badge.textContent = agendamentos.length;
+        lista.innerHTML = '<div class="painel-vazio"><i class="fas fa-spinner fa-spin"></i> Carregando...</div>';
 
-        if (agendamentos.length === 0) {
+        let adocoes = [];
+        let falhou  = false;
+        const token = localStorage.getItem('gp_supa_token');
+        try {
+            const resp = await fetch('/adocoes', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (resp.ok) adocoes = await resp.json();
+            else falhou = true;
+        } catch (_) { falhou = true; }
+
+        if (badge) badge.textContent = adocoes.length;
+
+        if (falhou) {
+            lista.innerHTML = '<div class="painel-vazio"><i class="fas fa-triangle-exclamation"></i> Não foi possível carregar as solicitações agora. Tente de novo em instantes.</div>';
+            return;
+        }
+
+        if (adocoes.length === 0) {
             lista.innerHTML = '<div class="painel-vazio"><i class="fas fa-paw"></i>Nenhuma solicitação de adoção ainda.</div>';
             return;
         }
 
-        lista.innerHTML = agendamentos.map(ag => `
+        const isAdmin = JSON.parse(localStorage.getItem('gp_usuario') || 'null')?.tipo === 'admin';
+
+        lista.innerHTML = adocoes.map(ag => `
             <div class="painel-adocao-card">
                 <div>
-                    <div class="pac-pet">🐾 ${ag.petNome || 'Animal'}</div>
-                    <div class="pac-adotante">${ag.nomeAdotante}</div>
-                    <div class="pac-tel"><i class="fas fa-phone"></i> ${ag.telefone}</div>
-                    <div class="pac-residencia"><i class="fas fa-home"></i> ${ag.residencia}</div>
-                    <div class="pac-protocolo">${ag.protocolo || ''}</div>
+                    <div class="pac-pet">🐾 ${escapeHTML(ag.animal_nome || 'Animal')}</div>
+                    <div class="pac-adotante">${escapeHTML(ag.nome_adotante || ag.usuario_nome || ag.usuario_email || 'Não informado')}</div>
+                    <div class="pac-tel"><i class="fas fa-phone"></i> ${escapeHTML(ag.telefone || '—')}</div>
+                    <div class="pac-residencia"><i class="fas fa-home"></i> ${escapeHTML(ag.residencia || '—')}</div>
+                    <div class="pac-protocolo">${escapeHTML(ag.protocolo || '')} — <b style="color:var(--p-gold);">${escapeHTML((ag.status || '').toUpperCase())}</b></div>
                 </div>
                 <div style="font-size:0.75rem; color:rgba(255,255,255,0.3); max-width:220px; line-height:1.5;">
-                    <b style="color:rgba(255,255,255,0.5);">Motivação:</b><br>${ag.motivacao || '—'}
+                    <b style="color:rgba(255,255,255,0.5);">Motivação:</b><br>${escapeHTML(ag.motivacao || '—')}
                 </div>
+                ${isAdmin && ag.status === 'pendente' ? `
+                <div style="display:flex; gap:8px;">
+                    <button class="pdc-btn-atualizar" onclick="decidirAdocao(${ag.id}, 'aprovada')">
+                        <i class="fas fa-check"></i> APROVAR
+                    </button>
+                    <button class="pdc-btn-atualizar" style="color:var(--danger); border-color:rgba(220,53,69,0.35);" onclick="decidirAdocao(${ag.id}, 'recusada')">
+                        <i class="fas fa-times"></i> RECUSAR
+                    </button>
+                </div>` : ''}
             </div>
         `).join('');
     }
 
-    function carregarStats() {
-        const ocs = db.getOcorrencias();
-        const ags = db.getAgendamentos();
+    window.decidirAdocao = async (id, status) => {
+        const token = localStorage.getItem('gp_supa_token');
+        try {
+            const resp = await fetch(`/adocoes/${id}/status`, {
+                method:  'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body:    JSON.stringify({ status }),
+            });
+            if (!resp.ok) throw new Error((await resp.json()).error || 'Falha ao atualizar');
+
+            GerenciadorEventos.exibirToast(
+                status === 'aprovada' ? '✅ Adoção Aprovada' : '⛔ Adoção Recusada',
+                status === 'aprovada' ? 'O animal foi marcado como adotado.' : 'O animal voltou a ficar disponível.',
+                'sucesso'
+            );
+            carregarAdocoes();
+            carregarAnimais();
+        } catch (err) {
+            Swal.fire('Erro', err.message, 'error');
+        }
+    };
+
+    // ---------------------------------------------------------
+    //  CADASTRO DE ANIMAL (admin) — foto vai pro Supabase Storage,
+    //  o resto vai pra /animais (POST, exige admin).
+    // ---------------------------------------------------------
+    async function uploadFotoAnimal(arquivo) {
+        const token = localStorage.getItem('gp_supa_token');
+        const nomeArquivo = `${Date.now()}-${arquivo.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`;
+
+        const resp = await fetch(`${_SUPA_URL}/storage/v1/object/animais/${nomeArquivo}`, {
+            method:  'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'apikey':        _SUPA_KEY,
+                'Content-Type':  arquivo.type || 'application/octet-stream',
+            },
+            body: arquivo,
+        });
+        if (!resp.ok) throw new Error('Falha ao enviar a foto. Tente novamente.');
+        return `${_SUPA_URL}/storage/v1/object/public/animais/${nomeArquivo}`;
+    }
+
+    const formCadastroAnimal = document.getElementById('form-cadastro-animal');
+    if (formCadastroAnimal) {
+        formCadastroAnimal.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('gp_supa_token');
+            if (!token) { Swal.fire('Erro', 'Faça login como administrador primeiro.', 'error'); return; }
+
+            const btn = formCadastroAnimal.querySelector('button[type="submit"]');
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CADASTRANDO...';
+            btn.disabled = true;
+
+            try {
+                const arquivo  = document.getElementById('ca-foto')?.files?.[0] || null;
+                const foto_url = arquivo ? await uploadFotoAnimal(arquivo) : null;
+
+                const payload = {
+                    nome:        document.getElementById('ca-nome')?.value.trim(),
+                    especie:     document.getElementById('ca-especie')?.value,
+                    raca:        document.getElementById('ca-raca')?.value.trim() || 'SRD',
+                    porte:       document.getElementById('ca-porte')?.value,
+                    idade:       document.getElementById('ca-idade')?.value,
+                    situacao:    document.getElementById('ca-situacao')?.value,
+                    saude:       document.getElementById('ca-saude')?.value.trim() || null,
+                    localizacao: document.getElementById('ca-localizacao')?.value.trim() || null,
+                    descricao:   document.getElementById('ca-descricao')?.value.trim() || null,
+                    castrado:    document.getElementById('ca-castrado')?.checked || false,
+                    vacinado:    document.getElementById('ca-vacinado')?.checked || false,
+                    foto_url,
+                };
+
+                const resp   = await fetch('/animais', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body:    JSON.stringify(payload),
+                });
+                const animal = await resp.json();
+                if (!resp.ok) throw new Error(animal.error || 'Não foi possível cadastrar o animal.');
+
+                Swal.fire({
+                    title: 'Animal cadastrado!',
+                    text:  `${animal.nome} já está na vitrine de adoção.`,
+                    icon:  'success',
+                    confirmButtonColor: '#c5a666',
+                });
+                formCadastroAnimal.reset();
+                carregarAnimais();
+            } catch (err) {
+                Swal.fire('Erro', err.message || 'Não foi possível cadastrar o animal.', 'error');
+            } finally {
+                btn.innerHTML = textoOriginal;
+                btn.disabled  = false;
+            }
+        });
+    }
+
+    async function carregarStats() {
         const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        const token = localStorage.getItem('gp_supa_token');
+
+        let ocs = db.getOcorrencias();
+        let ags = [];
+        try {
+            const [rOcs, rAgs] = await Promise.all([
+                fetch('/ocorrencias', { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch('/adocoes',     { headers: { 'Authorization': `Bearer ${token}` } }),
+            ]);
+            if (rOcs.ok) ocs = await rOcs.json();
+            if (rAgs.ok) ags = await rAgs.json();
+        } catch (_) { /* mantém fallback do localStorage para ocorrências */ }
+
         setEl('ps-total',    ocs.length);
         setEl('ps-analise',  ocs.filter(o => o.status === 'Em Análise' || o.status === 'Equipe Acionada').length);
         setEl('ps-resgatado',ocs.filter(o => o.status === 'Resgatado').length);

@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guard Pets Intelligence | Resgate, Adoção e Proteção Animal — Resende/RJ</title>
-    <meta name="description" content="Guard Pets Intelligence — resgate, adoção e proteção animal em Resende/RJ. Denuncie maus-tratos, adote um pet ou seja voluntário.">
-    <meta property="og:title" content="Guard Pets Intelligence">
+    <title>Guard Pets | Resgate, Adoção e Proteção Animal — Resende/RJ</title>
+    <meta name="description" content="Guard Pets — resgate, adoção e proteção animal em Resende/RJ. Denuncie maus-tratos, adote um pet ou seja voluntário.">
+    <meta property="og:title" content="Guard Pets">
     <meta property="og:description" content="Resgate, adoção e proteção animal em Resende/RJ.">
     <meta property="og:image" content="/image/LOGO PP.png">
     <meta property="og:type" content="website">
@@ -65,14 +65,14 @@
                     </div>
                     <div class="pd-divider"></div>
                     <button class="pd-btn" onclick="abrirMeuPerfil(); togglePerfilDropdown(false)"><i class="fas fa-id-badge"></i> Meu Perfil</button>
-                    <button class="pd-btn" onclick="abrirPainel(); togglePerfilDropdown(false)"><i class="fas fa-satellite-dish"></i> Painel do Agente</button>
+                    <button class="pd-btn" onclick="abrirPainel(); togglePerfilDropdown(false)"><i class="fas fa-satellite-dish"></i> Painel da Equipe</button>
                     <button class="pd-btn pd-btn-sair" onclick="fazerLogout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
                 </div>
             </div>
             <div class="pd-overlay" id="pd-overlay" onclick="togglePerfilDropdown(false)" style="display:none;"></div>
             <div id="nav-auth-buttons" style="display:flex; align-items:center; gap:10px;">
-                <button onclick="switchAuth('reg'); toggleAuth(true);" class="nav-links" style="border:1px solid rgba(197,166,102,0.5); cursor:pointer; background:none; color:var(--p-gold); font-size:0.72rem; font-weight:700; letter-spacing:1px; padding:8px 16px; border-radius:6px;">CRIAR CONTA</button>
-                <button id="nav-btn-portal" onclick="toggleAuth(true)" class="nav-links btn-agent" style="border:none; cursor:pointer;">LOGIN</button>
+                <button onclick="switchAuth('reg'); toggleAuth(true);" class="nav-links" style="border:1px solid rgba(197,166,102,0.5); cursor:pointer; background:none; color:var(--p-gold); font-size:0.72rem; font-weight:700; letter-spacing:1px; padding:8px 16px; border-radius:6px;">FAZER PARTE DA EQUIPE</button>
+                <button id="nav-btn-portal" onclick="toggleAuth(true)" class="nav-links btn-agent" style="border:none; cursor:pointer;">LOGIN DA EQUIPE</button>
             </div>
         </nav>
     </div>
@@ -85,12 +85,12 @@
     <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1600&q=80" class="hero-bg" alt="">
     <div class="container">
         <div class="hero-content" data-aos="fade-right">
-            <h1>Operação <br><span style="color:var(--p-gold)">Resgate Real.</span></h1>
-            <p>O único instituto que une monitoramento via satélite, corpo jurídico especializado e reabilitação intensiva para animais em estado crítico em Resende/RJ.</p>
+            <h1>Resgate Real. <br><span style="color:var(--p-gold)">Lar de Verdade.</span></h1>
+            <p>Resgatamos, cuidamos e encontramos um novo lar para animais em situação de risco em Resende/RJ. Viu maus-tratos? Nossa equipe conta com apoio jurídico pra agir.</p>
             <div style="display:flex; gap:20px; flex-wrap:wrap;">
-                <a href="#denuncia" class="btn-full" style="width:auto; padding:20px 40px; text-decoration:none; display:inline-block;">DENUNCIAR CRIME</a>
-                <a href="#adocao" class="btn-full" style="width:auto; padding:20px 40px; background:transparent; border:2px solid #fff; text-decoration:none; display:inline-block;">QUERO ADOTAR</a>
-                <button onclick="switchAuth('reg'); toggleAuth(true);" class="btn-full" style="width:auto; padding:20px 40px; background:var(--p-gold); border:none; cursor:pointer; color:var(--p-dark); font-weight:900; letter-spacing:2px;">CRIAR CONTA</button>
+                <a href="#adocao" class="btn-full" style="width:auto; padding:20px 40px; background:var(--p-gold); border:none; text-decoration:none; display:inline-block; color:var(--p-dark); font-weight:900;">QUERO ADOTAR</a>
+                <a href="#denuncia" class="btn-full" style="width:auto; padding:20px 40px; background:transparent; border:2px solid #fff; text-decoration:none; display:inline-block;">DENUNCIAR MAUS-TRATOS</a>
+                <a href="/voluntariado" class="btn-full" style="width:auto; padding:20px 40px; background:transparent; border:2px solid rgba(255,255,255,0.4); text-decoration:none; display:inline-block; color:#fff; font-weight:700; letter-spacing:1px;">SER VOLUNTÁRIO</a>
             </div>
         </div>
     </div>
@@ -133,18 +133,18 @@
     <div class="container">
         <div class="manifesto-grid">
             <div class="manifesto-text" data-aos="fade-right">
-                <h4>MANIFESTO INSTITUCIONAL</h4>
+                <h4>NOSSA MISSÃO</h4>
                 <h2>Quem Somos e por que existimos.</h2>
-                <p>O <strong>Guard Pets Intelligence</strong> não é apenas uma ONG de proteção. Somos uma força-tarefa multidisciplinar composta por advogados, veterinários e especialistas em logística tática, atuando desde 2019 na Região Sul-Fluminense.</p>
-                <p>Nascemos para preencher a lacuna entre a lei escrita e a realidade das ruas. Onde a justiça falha, nós entramos com monitoramento, provas jurídicas e resgate efetivo — 24h por dia, 7 dias por semana.</p>
+                <p>O <strong>Guard Pets</strong> é uma ONG de proteção animal — uma equipe de voluntários de resgate, veterinários e apoio jurídico atuando desde 2019 na Região Sul-Fluminense.</p>
+                <p>Nascemos para preencher a lacuna entre a lei e a realidade das ruas. Atuamos com resgate, denúncia e acompanhamento jurídico dos casos de maus-tratos, com uma rede de voluntários sempre pronta pra agir.</p>
                 <div class="goals-box">
                     <div class="goal-item" data-aos="zoom-in" data-aos-delay="100">
                         <h5>Missão</h5>
-                        <p>Erradicar os focos de maus-tratos severos através de intervenção jurídica e tática imediata.</p>
+                        <p>Reduzir os casos de maus-tratos na região através de resgate, denúncia e acompanhamento jurídico.</p>
                     </div>
                     <div class="goal-item" data-aos="zoom-in" data-aos-delay="200">
                         <h5>Visão</h5>
-                        <p>Tornar-se o maior centro de inteligência animalista da América Latina até 2028.</p>
+                        <p>Ser referência em proteção e resgate animal na Região Sul-Fluminense até 2028.</p>
                     </div>
                 </div>
             </div>
@@ -157,12 +157,12 @@
                             <span style="font-size:0.8rem; opacity:0.5;">Resgates e reabilitações completas previstas para este ano.</span>
                         </li>
                         <li style="margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:20px;">
-                            <span style="display:block; font-size:1.5rem; font-weight:900; font-family:'Montserrat';">100% Condenações</span>
-                            <span style="font-size:0.8rem; opacity:0.5;">Meta de eficácia jurídica em casos de denúncia protocolada.</span>
+                            <span style="display:block; font-size:1.5rem; font-weight:900; font-family:'Montserrat';">Acompanhamento Total</span>
+                            <span style="font-size:0.8rem; opacity:0.5;">Meta de acompanhamento jurídico em casos de denúncia protocolada.</span>
                         </li>
                         <li>
-                            <span style="display:block; font-size:1.5rem; font-weight:900; font-family:'Montserrat';">Base Móvel IA</span>
-                            <span style="font-size:0.8rem; opacity:0.5;">Unidades de triagem rápida com inteligência artificial para 2027.</span>
+                            <span style="display:block; font-size:1.5rem; font-weight:900; font-family:'Montserrat';">Triagem com IA</span>
+                            <span style="font-size:0.8rem; opacity:0.5;">Triagem mais rápida de denúncias com apoio de inteligência artificial (2027).</span>
                         </li>
                     </ul>
                 </div>
@@ -184,7 +184,7 @@
             <a href="#adocao" class="home-action-card" data-aos="fade-up">
                 <div class="home-card-icon"><i class="fas fa-paw"></i></div>
                 <h4>Adoção</h4>
-                <p>Conheça os 16 animais resgatados disponíveis para adoção. Cada um com prontuário completo.</p>
+                <p>Conheça os 16 animais resgatados disponíveis para adoção. Cada um com histórico completo.</p>
                 <span class="home-card-link">Ver animais <i class="fas fa-arrow-right"></i></span>
             </a>
             <a href="#denuncia" class="home-action-card destaque" data-aos="fade-up" data-aos-delay="100">
@@ -215,7 +215,7 @@
 <section id="adocao" class="adoption-section">
     <div class="container">
         <div style="text-align:center; margin-bottom:20px;" data-aos="fade-up">
-            <h4 style="color:var(--p-gold); font-weight:800; letter-spacing:3px; font-size:0.8rem;">ADOÇÃO TÁTICA</h4>
+            <h4 style="color:var(--p-gold); font-weight:800; letter-spacing:3px; font-size:0.8rem;">ADOÇÃO RESPONSÁVEL</h4>
             <h2 style="font-family:'Montserrat'; font-size:3rem;">Vidas Aguardando um Lar</h2>
             <p style="color:#666; margin-top:10px; max-width:540px; margin-left:auto; margin-right:auto; font-size:0.95rem;">Todos os animais são castrados, vacinados e reabilitados antes de serem disponibilizados para adoção.</p>
         </div>
@@ -235,7 +235,7 @@
                 <div class="pet-info">
                     <h3>Apolo <span style="color:#999; font-size:0.8rem; font-weight:400;">(Pitbull)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Vítima de abandono em Resende. Hoje está 100% reabilitado, castrado e dócil com crianças.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Apolo')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Apolo')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -245,7 +245,7 @@
                 <div class="pet-info">
                     <h3>Luna <span style="color:#999; font-size:0.8rem; font-weight:400;">(Felino)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Resgatada de cativeiro insalubre. Extremamente carinhosa, busca lar calmo e tranquilo.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Luna')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Luna')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -255,7 +255,7 @@
                 <div class="pet-info">
                     <h3>Thor <span style="color:#999; font-size:0.8rem; font-weight:400;">(Pastor Alemão)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Ex-cão de guarda descartado pelo dono. Inteligente, protetor e fiel. Ideal para casa com quintal.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Thor')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Thor')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -265,7 +265,7 @@
                 <div class="pet-info">
                     <h3>Amora <span style="color:#999; font-size:0.8rem; font-weight:400;">(SRD)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Encontrada ferida na rua. Totalmente recuperada, vacinada e cheia de energia para brincar.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Amora')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Amora')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -275,7 +275,7 @@
                 <div class="pet-info">
                     <h3>Bruce <span style="color:#999; font-size:0.8rem; font-weight:400;">(Rottweiler)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Resgatado de maus-tratos severos. Hoje é dócil com toda a família e ótimo com crianças.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Bruce')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Bruce')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -285,7 +285,7 @@
                 <div class="pet-info">
                     <h3>Mel <span style="color:#999; font-size:0.8rem; font-weight:400;">(Vira-lata)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Abandonada grávida na rodovia. Dócil, adora colo e atenção. Precisa urgente de um lar.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Mel')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Mel')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -295,7 +295,7 @@
                 <div class="pet-info">
                     <h3>Mia <span style="color:#999; font-size:0.8rem; font-weight:400;">(Siamês)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Resgatada de apartamento insalubre com 40 gatos. Tranquila e muito carinhosa com adultos.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Mia')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Mia')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -305,7 +305,7 @@
                 <div class="pet-info">
                     <h3>Nina <span style="color:#999; font-size:0.8rem; font-weight:400;">(SRD)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Atropelada e abandonada na calçada. Recuperada com sucesso, busca lar com muito carinho.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Nina')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Nina')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -315,7 +315,7 @@
                 <div class="pet-info">
                     <h3>Ravi <span style="color:#999; font-size:0.8rem; font-weight:400;">(Labrador)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Encontrado desnutrido em Itatiaia. Hoje é um gigante gentil — ama crianças e outros pets.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Ravi')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Ravi')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -325,7 +325,7 @@
                 <div class="pet-info">
                     <h3>Simba <span style="color:#999; font-size:0.8rem; font-weight:400;">(Gato SRD)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Resgatado de colônia de rua. Castrado, vacinado e acostumado com outros animais.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Simba')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Simba')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -335,7 +335,7 @@
                 <div class="pet-info">
                     <h3>Bolinha <span style="color:#999; font-size:0.8rem; font-weight:400;">(Poodle)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Idoso de 7 anos abandonado por mudança. Calmo, treinado e ótimo para apartamento.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Bolinha')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Bolinha')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -345,7 +345,7 @@
                 <div class="pet-info">
                     <h3>Zeca <span style="color:#999; font-size:0.8rem; font-weight:400;">(Fila Brasileiro)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Resgatado de rinhadeiro clandestino. Em reabilitação — precisa de tutor experiente.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Zeca')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Zeca')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -355,7 +355,7 @@
                 <div class="pet-info">
                     <h3>Lily <span style="color:#999; font-size:0.8rem; font-weight:400;">(Angorá)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Filhote de 5 meses achada em caixa de papelão. Vacinação ainda em andamento.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Lily')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Lily')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -365,7 +365,7 @@
                 <div class="pet-info">
                     <h3>Max <span style="color:#999; font-size:0.8rem; font-weight:400;">(Bulldog Francês)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Apreendido de criadouro clandestino. Saudável, castrado e pronto para um lar com amor.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Max')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Max')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -375,7 +375,7 @@
                 <div class="pet-info">
                     <h3>Pérola <span style="color:#999; font-size:0.8rem; font-weight:400;">(Gato SRD)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Resgatada junto com Lily. Brincalhona, adora outros gatos e crianças. Vacinação completa.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Pérola')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Pérola')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -385,7 +385,7 @@
                 <div class="pet-info">
                     <h3>Tobias <span style="color:#999; font-size:0.8rem; font-weight:400;">(Dogo Argentino)</span></h3>
                     <p style="color:#666; font-size:0.85rem; margin:10px 0 20px;">Encontrado acorrentado sem água por dias. Em recuperação nutricional. Dócil com tratamento.</p>
-                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Tobias')">SOLICITAR PRONTUÁRIO</button>
+                    <button class="btn-full" style="padding:12px;" onclick="toggleAdopt(true,'Tobias')">SOLICITAR ADOÇÃO</button>
                 </div>
             </div>
 
@@ -399,15 +399,15 @@
 <section class="container news-section" style="padding:100px 5%;">
     <div style="text-align:center; margin-bottom:50px;" data-aos="fade-up">
         <h4 style="color:var(--p-gold); font-weight:800; letter-spacing:3px; font-size:0.8rem;">TRANSPARÊNCIA</h4>
-        <h2 style="font-family:'Montserrat';">Relatórios de Inteligência</h2>
+        <h2 style="font-family:'Montserrat';">Últimas Notícias</h2>
     </div>
     <div class="pet-grid">
         <div class="news-card" data-aos="fade-up">
             <img src="/image/Luna.png" style="width:100%; height:200px; object-fit:cover;" alt="">
             <div style="padding:25px;">
-                <span class="badge badge-happy">Sucesso</span>
-                <h4 style="margin:12px 0 8px;">Justiça condena agressor em Resende</h4>
-                <p style="font-size:0.8rem; color:#666; line-height:1.6;">Pela primeira vez, o corpo jurídico do Guard Pets consegue pena máxima para crime de maus-tratos severos em Resende/RJ.</p>
+                <span class="badge badge-happy">Resgate</span>
+                <h4 style="margin:12px 0 8px;">Luna encontra um novo lar</h4>
+                <p style="font-size:0.8rem; color:#666; line-height:1.6;">Resgatada de um cativeiro insalubre em Volta Redonda, Luna passou por meses de cuidados até estar pronta pra adoção. <a href="#adocao" style="color:var(--p-gold);">Conheça a história completa.</a></p>
             </div>
         </div>
         <div class="news-card" data-aos="fade-up" data-aos-delay="100">
@@ -458,7 +458,7 @@
                     <option value="Rinha">Tipo: Rinha / Briga de Animais</option>
                 </select>
                 <textarea id="denuncia-relato" class="check-denuncia" rows="5" placeholder="Relate o ocorrido com detalhes: horário, frequência, número de animais..." required></textarea>
-                <button type="submit" id="btn-denuncia" class="btn-full" style="background:var(--danger); opacity:0.5;" disabled>ENVIAR PARA O COMANDO</button>
+                <button type="submit" id="btn-denuncia" class="btn-full" style="background:var(--danger); opacity:0.5;" disabled>ENVIAR DENÚNCIA</button>
             </form>
             <div class="status-ocorrencias-wrapper">
                 <div class="status-ocorrencias-header">
@@ -632,9 +632,9 @@
 <section id="mapa" class="mapa-section">
     <div class="container">
         <div style="text-align:center; margin-bottom:40px;" data-aos="fade-up">
-            <h4 style="color:var(--p-gold); font-weight:800; letter-spacing:3px; font-size:0.8rem;">INTELIGÊNCIA TERRITORIAL</h4>
-            <h2 style="font-family:'Montserrat'; color:#fff;">Mapa de Ocorrências</h2>
-            <p style="color:rgba(255,255,255,0.4); margin-top:10px; font-size:0.85rem;">Localizações aproximadas para preservar a identidade dos denunciantes.</p>
+            <h4 style="color:var(--p-gold); font-weight:800; letter-spacing:3px; font-size:0.8rem;">ONDE ATUAMOS</h4>
+            <h2 style="font-family:'Montserrat'; color:#fff;">Animais Resgatados na Região</h2>
+            <p style="color:rgba(255,255,255,0.4); margin-top:10px; font-size:0.85rem;">Localizações aproximadas — dados pessoais sempre preservados.</p>
         </div>
         <div id="mapa-leaflet" data-aos="fade-up"></div>
     </div>
@@ -746,13 +746,13 @@
     </a>
 </nav>
 
-<!-- PAINEL DO AGENTE -->
+<!-- PAINEL DA EQUIPE -->
 <div class="painel-overlay" id="painel-modal">
     <div class="painel-card">
         <div class="painel-header">
             <div>
                 <p style="color:var(--p-gold); font-size:0.7rem; letter-spacing:3px; font-weight:800;">ACESSO RESTRITO</p>
-                <h2 style="font-family:'Montserrat'; color:#fff; margin:5px 0 0;">Painel do Agente</h2>
+                <h2 style="font-family:'Montserrat'; color:#fff; margin:5px 0 0;">Painel da Equipe</h2>
                 <p id="painel-agente-nome" style="font-size:0.8rem; color:rgba(255,255,255,0.5); margin-top:5px;"></p>
             </div>
             <button onclick="fecharPainel()" style="background:none; border:none; color:rgba(255,255,255,0.4); font-size:1.5rem; cursor:pointer;"><i class="fas fa-times"></i></button>
@@ -761,6 +761,7 @@
             <button class="painel-tab active" onclick="trocarAbaPainel('denuncias', this)"><i class="fas fa-satellite-dish"></i> Denúncias</button>
             <button class="painel-tab" onclick="trocarAbaPainel('adocoes', this)"><i class="fas fa-paw"></i> Adoções</button>
             <button class="painel-tab" onclick="trocarAbaPainel('stats', this)"><i class="fas fa-chart-bar"></i> Estatísticas</button>
+            <button class="painel-tab" id="tab-cadastro-animal" style="display:none;" onclick="trocarAbaPainel('cadastro', this)"><i class="fas fa-plus-circle"></i> Cadastrar Animal</button>
         </div>
         <div class="painel-body">
             <div id="aba-denuncias" class="painel-aba active">
@@ -788,6 +789,57 @@
                     <div class="painel-stat-card" style="border-color:var(--p-gold);"><i class="fas fa-paw" style="color:var(--p-gold);"></i><span id="ps-adocoes" class="ps-num" style="color:var(--p-gold);">0</span><span class="ps-label">Adoções Solicitadas</span></div>
                 </div>
             </div>
+            <div id="aba-cadastro" class="painel-aba" style="display:none;">
+                <div class="painel-aba-header">
+                    <h4>Cadastrar Novo Animal</h4>
+                </div>
+                <form id="form-cadastro-animal">
+                    <div class="form-grid">
+                        <input type="text" id="ca-nome" placeholder="Nome do animal *" required>
+                        <select id="ca-especie" required>
+                            <option value="Cachorro">Cachorro</option>
+                            <option value="Gato">Gato</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-grid">
+                        <input type="text" id="ca-raca" placeholder="Raça (ex: SRD)">
+                        <input type="text" id="ca-localizacao" placeholder="Localização (ex: Volta Redonda, RJ)">
+                    </div>
+                    <div class="form-grid">
+                        <select id="ca-porte" required>
+                            <option value="Pequeno">Porte Pequeno</option>
+                            <option value="Médio" selected>Porte Médio</option>
+                            <option value="Grande">Porte Grande</option>
+                        </select>
+                        <select id="ca-idade" required>
+                            <option value="Filhote">Filhote</option>
+                            <option value="Jovem">Jovem</option>
+                            <option value="Adulto" selected>Adulto</option>
+                            <option value="Idoso">Idoso</option>
+                        </select>
+                    </div>
+                    <div class="form-grid">
+                        <select id="ca-situacao" required>
+                            <option value="Resgatado" selected>Resgatado</option>
+                            <option value="Urgente">Urgente</option>
+                            <option value="Em Tratamento">Em Tratamento</option>
+                            <option value="Reabilitado">Reabilitado</option>
+                        </select>
+                        <input type="text" id="ca-saude" placeholder="Estado de saúde (ex: Saudável)">
+                    </div>
+                    <textarea id="ca-descricao" rows="3" placeholder="Descrição / histórico do resgate..."></textarea>
+                    <div style="display:flex; gap:25px; margin:5px 0 20px; font-size:0.85rem; color:rgba(255,255,255,0.6);">
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" id="ca-castrado" style="width:16px; height:16px; padding:0; margin:0; background:none; border:1px solid rgba(255,255,255,0.3);"> Castrado</label>
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" id="ca-vacinado" style="width:16px; height:16px; padding:0; margin:0; background:none; border:1px solid rgba(255,255,255,0.3);"> Vacinado</label>
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block; color:rgba(255,255,255,0.6); font-size:0.8rem; margin-bottom:8px;">Foto do animal</label>
+                        <input type="file" id="ca-foto" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn-full">CADASTRAR ANIMAL</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -797,8 +849,8 @@
     <div class="auth-card">
         <div class="close-auth" onclick="toggleAuth(false)"><i class="fas fa-times"></i></div>
         <div class="auth-side-info">
-            <h2 style="font-family:'Montserrat'; margin-bottom:20px;">Portal de <br><span style="color:var(--p-gold)">Agentes.</span></h2>
-            <p style="font-size:0.8rem; opacity:0.7;">Acesso restrito para advogados, veterinários e equipe de resgate tático credenciada.</p>
+            <h2 style="font-family:'Montserrat'; margin-bottom:20px;">Área da <br><span style="color:var(--p-gold)">Equipe.</span></h2>
+            <p style="font-size:0.8rem; opacity:0.7;">Acesso restrito à equipe de resgate, veterinários e advogados cadastrados.</p>
         </div>
         <div class="auth-side-form">
             <div class="auth-tabs">
@@ -806,7 +858,7 @@
                 <button class="tab-link" id="tab-reg" onclick="switchAuth('reg')">CRIAR CONTA</button>
             </div>
             <form id="form-login">
-                <input type="email" name="email" placeholder="E-mail de Agente" style="color:#333; background:#f9f9f9;">
+                <input type="email" name="email" placeholder="E-mail" style="color:#333; background:#f9f9f9;">
                 <input type="password" name="senha" placeholder="Chave de Segurança" style="color:#333; background:#f9f9f9;">
                 <button type="submit" class="btn-full">ACESSAR SISTEMA</button>
             </form>
@@ -819,12 +871,12 @@
                 <input type="text" name="telefone" placeholder="WhatsApp / Telefone" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                 <input type="email" name="email" placeholder="E-mail para Validação" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                 <select name="especialidade" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
-                    <option value="Advogado">Especialidade: Advogado</option>
+                    <option value="Resgate">Especialidade: Resgate</option>
                     <option value="Veterinário">Especialidade: Veterinário</option>
-                    <option value="Resgate Tático">Especialidade: Resgate Tático</option>
+                    <option value="Advogado">Especialidade: Advogado</option>
                 </select>
                 <input type="password" name="senha" placeholder="Crie sua Senha" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
-                <button type="submit" class="btn-full" style="background:var(--success)">ENVIAR PARA AUDITORIA</button>
+                <button type="submit" class="btn-full" style="background:var(--success)">CRIAR CONTA</button>
             </form>
         </div>
     </div>
@@ -835,7 +887,7 @@
     <div class="adopt-card">
         <div class="close-auth" onclick="toggleAdopt(false)" style="color:#fff; top:15px; right:15px;"><i class="fas fa-times"></i></div>
         <div class="adopt-header">
-            <h3 style="font-family:'Montserrat';">Requisição de Prontuário</h3>
+            <h3 style="font-family:'Montserrat';">Solicitar Adoção</h3>
             <p style="font-size:0.7rem; opacity:0.7; letter-spacing:1px;" id="target-pet-name">ANIMAL: NOME DO PET</p>
         </div>
         <form class="adopt-body" id="form-adopt">
@@ -862,7 +914,7 @@
                 <textarea rows="3" placeholder="Conte brevemente sua experiência com pets..." required></textarea>
             </div>
             <button type="submit" class="btn-full" style="background:var(--p-dark);">SOLICITAR ACESSO AOS DADOS</button>
-            <p style="text-align:center; font-size:0.6rem; color:#999; margin-top:15px;">Ao solicitar, sua ficha passará por análise tática e jurídica.</p>
+            <p style="text-align:center; font-size:0.6rem; color:#999; margin-top:15px;">Ao solicitar, sua solicitação será analisada pela nossa equipe.</p>
         </form>
     </div>
 </div>
@@ -873,7 +925,7 @@
         <button class="close-auth" onclick="fecharMeuPerfil()" style="color:#fff;"><i class="fas fa-times"></i></button>
         <div class="pm-topo">
             <div class="pm-avatar" id="pm-avatar"></div>
-            <div class="pm-badge" id="pm-badge">Agente</div>
+            <div class="pm-badge" id="pm-badge">Membro</div>
         </div>
         <div class="pm-nome" id="pm-nome"></div>
         <div class="pm-email" id="pm-email"></div>
@@ -896,7 +948,7 @@
             <div class="pm-item">
                 <i class="fas fa-calendar-check"></i>
                 <div>
-                    <span class="pm-label">Agente desde</span>
+                    <span class="pm-label">Membro desde</span>
                     <span class="pm-val" id="pm-desde"></span>
                 </div>
             </div>
@@ -910,7 +962,7 @@
         </div>
         <div class="pm-divider"></div>
         <button class="btn-full" onclick="abrirPainel(); fecharMeuPerfil();" style="margin-top:8px; font-size:0.8rem; padding:14px;">
-            <i class="fas fa-satellite-dish"></i> &nbsp;ACESSAR PAINEL DO AGENTE
+            <i class="fas fa-satellite-dish"></i> &nbsp;ACESSAR PAINEL DA EQUIPE
         </button>
     </div>
 </div>
@@ -920,7 +972,7 @@
     <div class="container footer-grid">
         <div>
             <a href="#inicio" class="logo" style="font-size:1.6rem; margin-bottom:15px; display:block;">GUARD<span>PETS</span></a>
-            <p style="color:rgba(255,255,255,0.4); font-size:0.8rem; max-width:260px; line-height:1.7;">Resgate, proteção e inteligência animalista em Resende/RJ desde 2019.</p>
+            <p style="color:rgba(255,255,255,0.4); font-size:0.8rem; max-width:260px; line-height:1.7;">Resgate, proteção e cuidado animal em Resende/RJ desde 2019.</p>
         </div>
         <div>
             <h6 style="color:var(--p-gold); letter-spacing:2px; font-size:0.7rem; margin-bottom:15px;">NAVEGAÇÃO</h6>
@@ -944,15 +996,17 @@
         </div>
     </div>
     <div style="text-align:center; border-top:1px solid rgba(255,255,255,0.06); margin-top:40px; padding-top:25px;">
-        <p style="font-size:0.75rem; color:rgba(255,255,255,0.3);">&copy; 2026 Guard Pets Global Intelligence — Resende/RJ. Proteção Animal em Nível Militar.</p>
+        <p style="font-size:0.75rem; color:rgba(255,255,255,0.3);">&copy; 2026 Guard Pets — Resende/RJ. Proteção e Resgate Animal.</p>
     </div>
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/patterns/singleton.js"></script>
 <script src="js/patterns/factory.js"></script>
 <script src="js/patterns/observer.js"></script>
+<script src="js/patterns/supabaseClient.js"></script>
 <script src="index1.js" defer></script>
 <script>
 if ('serviceWorker' in navigator) {

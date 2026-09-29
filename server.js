@@ -1,9 +1,13 @@
 const express = require('express');
 const path    = require('path');
-const { Pool } = require('pg');
 const cors    = require('cors');
-const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
+
+const db              = require('./db/pool');           // [SINGLETON]
+const usuariosRepo    = require('./repositories/usuariosRepository');
+const voluntariosRepo = require('./repositories/voluntariosRepository');
+const animaisService  = require('./services/animaisService');
+const adocoesService  = require('./services/adocoesService');
 
 const app        = express();
 const PORT       = process.env.PORT || 3000;
@@ -26,13 +30,25 @@ app.use(cors({
     credentials: true,
 }));
 app.use(express.json());
+app.set('trust proxy', true); // necessário pra req.ip refletir o IP real atrás do proxy da Vercel
 
-// Banco de dados (Supabase)
-const db = new Pool(
-    process.env.DATABASE_URL
-        ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
-        : {}
-);
+// Rate limit simples em memória pra evitar enchente de denúncia falsa.
+// Limitação conhecida: em serverless (Vercel), cada instância fria tem sua
+// própria memória — não é um limite 100% global, mas já barra flood básico.
+const tentativasPorIp = new Map();
+function limitarPorIp(maxTentativas, janelaMs) {
+    return (req, res, next) => {
+        const ip = req.ip || 'desconhecido';
+        const agora = Date.now();
+        const tentativas = (tentativasPorIp.get(ip) || []).filter(t => agora - t < janelaMs);
+        if (tentativas.length >= maxTentativas) {
+            return res.status(429).json({ error: 'Muitas tentativas. Aguarde um pouco e tente novamente.' });
+        }
+        tentativas.push(agora);
+        tentativasPorIp.set(ip, tentativas);
+        next();
+    };
+}
 
 function checarBanco(res) {
     if (!process.env.DATABASE_URL) {
@@ -53,11 +69,14 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Middleware de autenticação — verifica token do Supabase Auth
-async function autenticar(req, res, next) {
+// Resolve um token (Supabase Auth ou JWT local) em req.usuario = { id, tipo, ... }
+// real, vindo da tabela `usuarios` — nunca só o que o token diz. Retorna
+// null se o token não existir ou for inválido (não decide o que fazer com isso,
+// quem chama decide: `autenticar` bloqueia, `tentarAutenticar` segue em frente).
+async function resolverUsuario(req) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.status(401).json({ error: 'Token não fornecido' });
+    if (!token) return null;
 
     const supaUrl = process.env.SUPABASE_URL;
     const supaKey = process.env.SUPABASE_ANON_KEY;
@@ -71,75 +90,60 @@ async function autenticar(req, res, next) {
                 }
             });
             if (resp.ok) {
-                const user = await resp.json();
-                req.usuario = { id: user.id, email: user.email, tipo: 'usuario' };
-                return next();
+                const authUser = await resp.json();
+                const usuario  = await usuariosRepo.buscarOuCriarPorAuthId(
+                    authUser.id, authUser.email, authUser.user_metadata || {}
+                );
+                return { id: usuario.id, authId: authUser.id, email: usuario.email, tipo: usuario.tipo };
             }
-        } catch (_) { /* prosseguir para fallback */ }
+        } catch (err) {
+            // Não é "token inválido" — é o banco/rede que falhou. Loga pra não
+            // virar um 401 misterioso quando o problema real é outro (ex.:
+            // DATABASE_URL ausente ou banco fora do ar).
+            console.error('[Auth] Falha ao resolver usuário via Supabase:', err.message);
+        }
     }
 
     // Fallback: JWT local (compatibilidade durante transição)
-    jwt.verify(token, JWT_SECRET, (err, payload) => {
-        if (err) return res.status(403).json({ error: 'Token inválido ou expirado' });
-        req.usuario = payload;
-        next();
-    });
+    try {
+        return jwt.verify(token, JWT_SECRET);
+    } catch (_) {
+        return null;
+    }
+}
+
+// Exige login — usado nas rotas que só fazem sentido pra quem tem conta.
+async function autenticar(req, res, next) {
+    const usuario = await resolverUsuario(req);
+    if (!usuario) return res.status(401).json({ error: 'Token não fornecido ou inválido' });
+    req.usuario = usuario;
+    next();
+}
+
+// Login opcional — usado em rotas públicas que ficam melhores quando a
+// pessoa está logada (ex.: solicitar adoção guarda o vínculo com a conta
+// dela), mas não podem exigir isso de quem só quer usar o site.
+async function tentarAutenticar(req, res, next) {
+    req.usuario = await resolverUsuario(req);
+    next();
+}
+
+function exigirAdmin(req, res, next) {
+    if (req.usuario?.tipo !== 'admin') return res.status(403).json({ error: 'Acesso restrito a administradores' });
+    next();
 }
 
 // ============================================================
 // AUTENTICAÇÃO
 // ============================================================
+// Login e cadastro são 100% via Supabase Auth (o front chama a API do
+// Supabase direto). O backend só valida o token recebido — ver
+// `resolverUsuario` acima. `/register` e `/login` locais foram removidos
+// por não terem mais chamador nenhum.
 
-app.post('/register', async (req, res) => {
-    if (!checarBanco(res)) return;
-    const { nome, sobrenome, cpf, email, telefone, senha, especialidade } = req.body;
-    if (!nome || !email || !senha)
-        return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
-
-    try {
-        const senhaHash = await bcrypt.hash(senha, 10);
-        const result = await db.query(
-            `INSERT INTO usuarios (nome, sobrenome, cpf, email, telefone, senha, especialidade)
-             VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
-            [nome, sobrenome || '', cpf || null, email, telefone || null, senhaHash, especialidade || 'Visitante']
-        );
-        res.status(201).json({ message: 'Usuário cadastrado!', id: result.rows[0].id });
-    } catch (err) {
-        if (err.code === '23505') return res.status(409).json({ error: 'Email já cadastrado' });
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.post('/login', async (req, res) => {
-    if (!checarBanco(res)) return;
-    const { email, senha } = req.body;
-    if (!email || !senha)
-        return res.status(400).json({ error: 'Email e senha são obrigatórios' });
-
-    try {
-        const result = await db.query(
-            'SELECT * FROM usuarios WHERE email=$1 AND ativo=TRUE', [email]
-        );
-        if (result.rows.length === 0)
-            return res.status(401).json({ error: 'Credenciais inválidas' });
-
-        const usuario = result.rows[0];
-        const ok = await bcrypt.compare(senha, usuario.senha);
-        if (!ok) return res.status(401).json({ error: 'Credenciais inválidas' });
-
-        if (!JWT_SECRET) return res.status(500).json({ error: 'Servidor não configurado' });
-        const token = jwt.sign(
-            { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
-            JWT_SECRET, { expiresIn: '8h' }
-        );
-        res.json({
-            message: 'Login realizado!', token,
-            usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, tipo: usuario.tipo },
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+// Retorna quem é o usuário autenticado (id interno + tipo real),
+// já que o token por si só não diz se a conta é admin ou adotante.
+app.get('/me', autenticar, (req, res) => res.json(req.usuario));
 
 // ============================================================
 // CRUD USUÁRIOS
@@ -147,32 +151,22 @@ app.post('/login', async (req, res) => {
 
 app.get('/usuarios', autenticar, async (req, res) => {
     try {
-        const r = await db.query(
-            'SELECT id,nome,sobrenome,cpf,email,telefone,especialidade,tipo,ativo,criado_em FROM usuarios'
-        );
-        res.json(r.rows);
+        res.json(await usuariosRepo.listar());
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.get('/usuarios/:id', autenticar, async (req, res) => {
     try {
-        const r = await db.query(
-            'SELECT id,nome,sobrenome,cpf,email,telefone,especialidade,tipo,ativo,criado_em FROM usuarios WHERE id=$1',
-            [req.params.id]
-        );
-        if (!r.rows.length) return res.status(404).json({ error: 'Usuário não encontrado' });
-        res.json(r.rows[0]);
+        const usuario = await usuariosRepo.buscarPorId(req.params.id);
+        if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado' });
+        res.json(usuario);
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.put('/usuarios/:id', autenticar, async (req, res) => {
-    const { nome, sobrenome, telefone, especialidade } = req.body;
     try {
-        const r = await db.query(
-            'UPDATE usuarios SET nome=$1,sobrenome=$2,telefone=$3,especialidade=$4 WHERE id=$5',
-            [nome, sobrenome, telefone || null, especialidade, req.params.id]
-        );
-        if (!r.rowCount) return res.status(404).json({ error: 'Usuário não encontrado' });
+        const ok = await usuariosRepo.atualizar(req.params.id, req.body);
+        if (!ok) return res.status(404).json({ error: 'Usuário não encontrado' });
         res.json({ message: 'Usuário atualizado!' });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -182,9 +176,108 @@ app.delete('/usuarios/:id', autenticar, async (req, res) => {
     if (req.usuario.id !== alvo && req.usuario.tipo !== 'admin')
         return res.status(403).json({ error: 'Sem permissão para remover este usuário' });
     try {
-        const r = await db.query('DELETE FROM usuarios WHERE id=$1', [alvo]);
-        if (!r.rowCount) return res.status(404).json({ error: 'Usuário não encontrado' });
+        const ok = await usuariosRepo.remover(alvo);
+        if (!ok) return res.status(404).json({ error: 'Usuário não encontrado' });
         res.json({ message: 'Usuário removido!' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ============================================================
+// CRUD ANIMAIS
+// ============================================================
+
+app.get('/animais', async (req, res) => {
+    if (!checarBanco(res)) return;
+    try {
+        const { especie, porte, idade, localizacao } = req.query;
+        res.json(await animaisService.listar({ especie, porte, idade, localizacao }));
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/animais/:id', async (req, res) => {
+    if (!checarBanco(res)) return;
+    try {
+        const animal = await animaisService.buscarPorId(req.params.id);
+        if (!animal) return res.status(404).json({ error: 'Animal não encontrado' });
+        res.json(animal);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/animais', autenticar, exigirAdmin, async (req, res) => {
+    if (!checarBanco(res)) return;
+    try {
+        res.status(201).json(await animaisService.criar(req.body));
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+app.put('/animais/:id', autenticar, exigirAdmin, async (req, res) => {
+    if (!checarBanco(res)) return;
+    try {
+        const animal = await animaisService.atualizar(req.params.id, req.body);
+        if (!animal) return res.status(404).json({ error: 'Animal não encontrado' });
+        res.json(animal);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+app.delete('/animais/:id', autenticar, exigirAdmin, async (req, res) => {
+    if (!checarBanco(res)) return;
+    try {
+        const ok = await animaisService.remover(req.params.id);
+        if (!ok) return res.status(404).json({ error: 'Animal não encontrado' });
+        res.json({ message: 'Animal removido!' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ============================================================
+// ADOÇÕES
+// ============================================================
+
+app.post('/adocoes', tentarAutenticar, async (req, res) => {
+    if (!checarBanco(res)) return;
+    const { idAnimal, nome, telefone, residencia, motivacao } = req.body;
+    if (!idAnimal) return res.status(400).json({ error: 'idAnimal é obrigatório' });
+    try {
+        const adocao = await adocoesService.solicitar({
+            idAnimal, idUsuario: req.usuario?.id || null, nomeAdotante: nome, telefone, residencia, motivacao,
+        });
+        res.status(201).json(adocao);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+app.get('/adocoes', autenticar, async (req, res) => {
+    if (!checarBanco(res)) return;
+    try {
+        res.json(await adocoesService.listarPara(req.usuario));
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/adocoes/:id/status', autenticar, exigirAdmin, async (req, res) => {
+    if (!checarBanco(res)) return;
+    try {
+        const adocao = await adocoesService.atualizarStatus(req.params.id, req.body.status);
+        if (!adocao) return res.status(404).json({ error: 'Solicitação não encontrada' });
+        res.json(adocao);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+// ============================================================
+// VOLUNTARIADO
+// ============================================================
+
+app.post('/voluntarios', async (req, res) => {
+    if (!checarBanco(res)) return;
+    const { nome, telefone, tipo, cidade, mensagem } = req.body;
+    if (!nome || !telefone) return res.status(400).json({ error: 'Nome e telefone são obrigatórios' });
+    try {
+        const voluntario = await voluntariosRepo.criar({ nome, telefone, tipo, cidade, mensagem });
+        res.status(201).json({ message: 'Cadastro recebido!', id: voluntario.id });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/voluntarios', autenticar, exigirAdmin, async (req, res) => {
+    if (!checarBanco(res)) return;
+    try {
+        res.json(await voluntariosRepo.listar());
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -192,7 +285,7 @@ app.delete('/usuarios/:id', autenticar, async (req, res) => {
 // OCORRÊNCIAS
 // ============================================================
 
-app.post('/denuncia', async (req, res) => {
+app.post('/denuncia', limitarPorIp(5, 60 * 60 * 1000), async (req, res) => {
     if (!checarBanco(res)) return;
     const { nome, localizacao, tipo, relato } = req.body;
     const protocolo = `GP-${Date.now().toString().slice(-6)}`;
@@ -210,6 +303,22 @@ app.get('/ocorrencias', autenticar, async (req, res) => {
     try {
         const r = await db.query('SELECT * FROM ocorrencias ORDER BY criado_em DESC');
         res.json(r.rows);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Rastreamento público por protocolo — quem denunciou consegue conferir o
+// status de qualquer navegador/dispositivo, sem precisar de login. Não
+// devolve o nome do denunciante nem o relato completo (só quem denunciou
+// sabe o protocolo, mas mesmo assim não expomos identidade publicamente).
+app.get('/ocorrencias/protocolo/:protocolo', async (req, res) => {
+    if (!checarBanco(res)) return;
+    try {
+        const r = await db.query(
+            'SELECT protocolo, tipo, localizacao, status, criado_em, atualizado_em FROM ocorrencias WHERE protocolo=$1',
+            [req.params.protocolo.toUpperCase()]
+        );
+        if (!r.rows.length) return res.status(404).json({ error: 'Protocolo não encontrado' });
+        res.json(r.rows[0]);
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 

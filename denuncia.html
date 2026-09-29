@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Denúncia | Guard Pets Intelligence</title>
+    <title>Registrar Denúncia | Guard Pets</title>
     <meta name="description" content="Denuncie maus-tratos a animais em Resende/RJ de forma sigilosa. Nossa equipe age em até 24h.">
     <meta property="og:title" content="Registrar Denúncia | Guard Pets">
     <meta property="og:description" content="Denuncie maus-tratos a animais em Resende/RJ de forma sigilosa. Nossa equipe age em até 24h.">
@@ -47,7 +47,7 @@
                     <button onclick="abrirPainel()" class="nav-links btn-agent" style="border:none; cursor:pointer;">PAINEL</button>
                     <button onclick="fazerLogout()" style="background:none; border:none; color:rgba(255,255,255,0.5); font-size:0.75rem; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px;">SAIR</button>
                 </span>
-                <button id="nav-btn-portal" onclick="toggleAuth(true)" class="nav-links btn-agent" style="border:none; cursor:pointer;">PORTAL DO AGENTE</button>
+                <button id="nav-btn-portal" onclick="toggleAuth(true)" class="nav-links btn-agent" style="border:none; cursor:pointer;">ÁREA DA EQUIPE</button>
             </nav>
         </div>
     </header>
@@ -57,7 +57,7 @@
         <div class="container page-hero-content" data-aos="fade-up">
             <p class="page-hero-tag">PROTOCOLO SIGILOSO</p>
             <h1>Denuncie Maus-Tratos</h1>
-            <p>Sua identidade é protegida. Cada denúncia gera um protocolo rastreável e nossa equipe jurídica age em até 24 horas.</p>
+            <p>Sua identidade é protegida. Cada denúncia gera um protocolo rastreável e nossa equipe age em até 24 horas, com apoio jurídico quando o caso precisa.</p>
         </div>
     </section>
 
@@ -85,7 +85,7 @@
                         <span style="color:var(--p-gold); font-family:'Montserrat'; font-weight:900; font-size:1.2rem;">3</span>
                     </div>
                     <h5 style="font-family:'Montserrat'; margin-bottom:8px;">Ação em 24h</h5>
-                    <p style="color:#666; font-size:0.85rem;">Nossa equipe jurídica e de resgate é acionada imediatamente.</p>
+                    <p style="color:#666; font-size:0.85rem;">Nossa equipe de resgate é acionada imediatamente, com apoio jurídico quando há um responsável a ser cobrado.</p>
                 </div>
                 <div style="text-align:center; padding:30px 20px;">
                     <div style="width:60px; height:60px; background:rgba(197,166,102,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; border:2px solid rgba(197,166,102,0.3);">
@@ -113,7 +113,7 @@
                         <option value="Rinha">Tipo: Rinha / Briga de Animais</option>
                     </select>
                     <textarea id="denuncia-relato" class="check-denuncia" rows="5" placeholder="Relate o ocorrido com detalhes: horário, frequência, número de animais, se há testemunhas..." required></textarea>
-                    <button type="submit" id="btn-denuncia" class="btn-full" style="background:var(--danger); opacity:0.5;" disabled>ENVIAR PARA O COMANDO</button>
+                    <button type="submit" id="btn-denuncia" class="btn-full" style="background:var(--danger); opacity:0.5;" disabled>ENVIAR DENÚNCIA</button>
                 </form>
 
                 <div class="status-ocorrencias-wrapper">
@@ -156,13 +156,13 @@
     <a href="https://wa.me/5524999999999" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
-    <!-- PAINEL DO AGENTE -->
+    <!-- PAINEL DA EQUIPE -->
     <div class="painel-overlay" id="painel-modal">
         <div class="painel-card">
             <div class="painel-header">
                 <div>
                     <p style="color:var(--p-gold); font-size:0.7rem; letter-spacing:3px; font-weight:800;">ACESSO RESTRITO</p>
-                    <h2 style="font-family:'Montserrat'; color:#fff; margin:5px 0 0;">Painel do Agente</h2>
+                    <h2 style="font-family:'Montserrat'; color:#fff; margin:5px 0 0;">Painel da Equipe</h2>
                     <p id="painel-agente-nome" style="font-size:0.8rem; color:rgba(255,255,255,0.5); margin-top:5px;"></p>
                 </div>
                 <button onclick="fecharPainel()" style="background:none; border:none; color:rgba(255,255,255,0.4); font-size:1.5rem; cursor:pointer;"><i class="fas fa-times"></i></button>
@@ -205,8 +205,8 @@
         <div class="auth-card">
             <div class="close-auth" onclick="toggleAuth(false)"><i class="fas fa-times"></i></div>
             <div class="auth-side-info">
-                <h2 style="font-family:'Montserrat'; margin-bottom:20px;">Portal de <br><span style="color:var(--p-gold)">Agentes.</span></h2>
-                <p style="font-size:0.8rem; opacity:0.7;">Acesso restrito para advogados, veterinários e equipe de resgate tático credenciada.</p>
+                <h2 style="font-family:'Montserrat'; margin-bottom:20px;">Área da <br><span style="color:var(--p-gold)">Equipe.</span></h2>
+                <p style="font-size:0.8rem; opacity:0.7;">Acesso restrito à equipe de resgate, veterinários e advogados cadastrados.</p>
             </div>
             <div class="auth-side-form">
                 <div class="auth-tabs">
@@ -214,7 +214,7 @@
                     <button class="tab-link" id="tab-reg" onclick="switchAuth('reg')">CRIAR CONTA</button>
                 </div>
                 <form id="form-login">
-                    <input type="email" name="email" placeholder="E-mail de Agente" style="color:#333; background:#f9f9f9;">
+                    <input type="email" name="email" placeholder="E-mail" style="color:#333; background:#f9f9f9;">
                     <input type="password" name="senha" placeholder="Chave de Segurança" style="color:#333; background:#f9f9f9;">
                     <button type="submit" class="btn-full">ACESSAR SISTEMA</button>
                 </form>
@@ -227,12 +227,12 @@
                     <input type="text" name="telefone" placeholder="WhatsApp / Telefone" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                     <input type="email" name="email" placeholder="E-mail para Validação" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
                     <select name="especialidade" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
-                        <option value="Advogado">Especialidade: Advogado</option>
-                        <option value="Veterinário">Especialidade: Veterinário</option>
-                        <option value="Resgate Tático">Especialidade: Resgate Tático</option>
+                        <option value="Resgate">Especialidade: Resgate</option>
+                    <option value="Veterinário">Especialidade: Veterinário</option>
+                    <option value="Advogado">Especialidade: Advogado</option>
                     </select>
                     <input type="password" name="senha" placeholder="Crie sua Senha" style="color:#333; background:#f9f9f9; font-size:0.8rem;">
-                    <button type="submit" class="btn-full" style="background:var(--success)">ENVIAR PARA AUDITORIA</button>
+                    <button type="submit" class="btn-full" style="background:var(--success)">CRIAR CONTA</button>
                 </form>
             </div>
         </div>
@@ -241,7 +241,7 @@
         <div class="container footer-grid">
             <div>
                 <a href="/" class="logo" style="font-size:1.6rem; margin-bottom:15px; display:block;">GUARD<span>PETS</span></a>
-                <p style="color:rgba(255,255,255,0.4); font-size:0.8rem; max-width:260px;">Resgate, proteção e inteligência animalista em Resende/RJ desde 2019.</p>
+                <p style="color:rgba(255,255,255,0.4); font-size:0.8rem; max-width:260px;">Resgate, proteção e cuidado animal em Resende/RJ desde 2019.</p>
             </div>
             <div>
                 <h6 style="color:var(--p-gold); letter-spacing:2px; font-size:0.7rem; margin-bottom:15px;">NAVEGAÇÃO</h6>
@@ -265,7 +265,7 @@
             </div>
         </div>
         <div style="text-align:center; border-top:1px solid rgba(255,255,255,0.06); margin-top:40px; padding-top:25px;">
-            <p style="font-size:0.75rem; color:rgba(255,255,255,0.3);">&copy; 2026 Guard Pets Global Intelligence — Resende/RJ. Proteção Animal em Nível Militar.</p>
+            <p style="font-size:0.75rem; color:rgba(255,255,255,0.3);">&copy; 2026 Guard Pets — Resende/RJ. Proteção e Resgate Animal.</p>
         </div>
     </footer>
 
