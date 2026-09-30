@@ -565,9 +565,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     relato:      document.getElementById('denuncia-relato')?.value || '',
                 });
 
-                // Envia ao backend (não bloqueia se falhar — salva localmente de qualquer forma)
+                // Envia ao backend — se falhar, avisa a pessoa em vez de fingir sucesso
+                let salvoNoBanco = false;
                 try {
-                    await fetch('/denuncia', {
+                    const resp = await fetch('/denuncia', {
                         method:  'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body:    JSON.stringify({
@@ -577,24 +578,46 @@ document.addEventListener('DOMContentLoaded', () => {
                             relato:      ocorrencia.relato,
                         }),
                     });
-                } catch (_) { /* backend indisponível, continua offline */ }
+                    if (resp.ok) {
+                        const dataResp = await resp.json();
+                        if (dataResp.protocolo) ocorrencia.protocolo = dataResp.protocolo;
+                        salvoNoBanco = true;
+                    } else {
+                        const erroResp = await resp.json().catch(() => ({}));
+                        console.error('[App] Backend recusou a denúncia:', resp.status, erroResp.error);
+                    }
+                } catch (err) {
+                    console.error('[App] Backend indisponível ao enviar denúncia:', err.message);
+                }
 
-                // [SINGLETON] — Persiste no localStorage via instância única
+                // [SINGLETON] — Persiste no localStorage via instância única (fallback offline)
                 db.adicionarOcorrencia(ocorrencia);
 
                 // [OBSERVER] — Notifica observadores sobre nova ocorrência
                 GerenciadorEventos.notificar('nova_ocorrencia', ocorrencia);
 
-                // Exibe confirmação visual (mantido do original)
-                Swal.fire({
-                    title:              'PROTOCOLO GERADO!',
-                    html:               `Denúncia enviada ao Comando!<br><br>
-                                         <strong style="color:#c5a666; font-size:1.2rem;">
-                                           Protocolo: ${ocorrencia.protocolo}
-                                         </strong>`,
-                    icon:               'success',
-                    confirmButtonColor: '#c5a666',
-                });
+                // Exibe confirmação visual — deixa claro quando não foi para o banco
+                if (salvoNoBanco) {
+                    Swal.fire({
+                        title:              'PROTOCOLO GERADO!',
+                        html:               `Denúncia enviada ao Comando!<br><br>
+                                             <strong style="color:#c5a666; font-size:1.2rem;">
+                                               Protocolo: ${ocorrencia.protocolo}
+                                             </strong>`,
+                        icon:               'success',
+                        confirmButtonColor: '#c5a666',
+                    });
+                } else {
+                    Swal.fire({
+                        title:              'Salvo só neste dispositivo',
+                        html:               `Não conseguimos confirmar o registro no servidor agora.<br>
+                                             A denúncia ficou salva localmente (protocolo ${ocorrencia.protocolo}),
+                                             mas pode não estar no banco de dados. Tente novamente mais tarde
+                                             ou avise um administrador.`,
+                        icon:               'warning',
+                        confirmButtonColor: '#c5a666',
+                    });
+                }
 
                 formDenuncia.reset();
                 checkAllForms();

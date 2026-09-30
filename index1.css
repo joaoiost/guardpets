@@ -120,6 +120,11 @@
         .btn-full { width: 100%; padding: 20px; background: var(--p-dark); color: #fff; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
         .btn-full:hover { background: var(--p-gold); color: var(--p-dark); }
 
+        /* SweetAlert2 usa z-index 1060 por padrão — menor que o .auth-overlay (3000),
+           então os avisos de sucesso/erro (conta criada, login, etc.) ficavam
+           escondidos atrás do modal de login/cadastro enquanto ele fechava. */
+        .swal2-container { z-index: 999999 !important; }
+
         footer { background: #000; color: #fff; padding: 60px 0; text-align: center; font-size: 0.8rem; opacity: 0.6; }
         .footer-social { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
         .footer-social a img { width: 24px; height: 24px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.6; transition: opacity 0.3s; }
