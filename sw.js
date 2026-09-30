@@ -1,4 +1,4 @@
-const CACHE = 'guardpets-v4';
+const CACHE = 'guardpets-v5';
 // Nunca cacheia HTML — só assets estáticos
 const STATIC = ['/index1.css', '/index1.js'];
 
@@ -23,7 +23,16 @@ self.addEventListener('fetch', e => {
     if (url.endsWith('/') || url.includes('.html') ||
         /\/(login|register|me|denuncia|ocorrencias|health|animais|adocoes|usuarios)/.test(url) ||
         !url.startsWith(self.location.origin)) return;
+    // Rede primeiro — garante que index1.js/index1.css atualizados cheguem
+    // assim que publicados. O cache só serve de reserva se a rede falhar
+    // (offline), pra não travar a pessoa numa versão antiga do site.
     e.respondWith(
-        caches.match(e.request).then(cached => cached || fetch(e.request))
+        fetch(e.request)
+            .then(resp => {
+                const copia = resp.clone();
+                caches.open(CACHE).then(c => c.put(e.request, copia));
+                return resp;
+            })
+            .catch(() => caches.match(e.request))
     );
 });
