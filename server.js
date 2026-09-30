@@ -292,7 +292,7 @@ app.get('/voluntarios', autenticar, exigirAdmin, async (req, res) => {
 // OCORRÊNCIAS
 // ============================================================
 
-app.post('/denuncia', limitarPorIp(5, 60 * 60 * 1000), async (req, res) => {
+app.post('/denuncia', limitarPorIp(30, 60 * 60 * 1000), async (req, res) => {
     if (!checarBanco(res)) return;
     const { nome, localizacao, tipo, relato } = req.body;
     const protocolo = `GP-${Date.now().toString().slice(-6)}`;
