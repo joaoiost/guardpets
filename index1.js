@@ -55,7 +55,7 @@ async function supaGetUser(token) {
  *  [FACTORY] EntidadeFactory.criar<Tipo>()
  *    → Cria objetos padronizados (usuário, ocorrência, etc.)
  *
- *  [OBSERVER] GerenciadorEventos.notificar()
+ *  [OBSERVER] window.GerenciadorEventos.notificar()
  *    → Dispara notificações visuais (toast) ao ocorrer eventos
  *
  *  As funcionalidades originais foram mantidas integralmente.
@@ -194,8 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
         window.supabaseClient
             .channel('guardpets-animais')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'animais' }, (payload) => {
-                GerenciadorEventos.notificar('novo_animal', payload.new);
-                GerenciadorEventos.exibirToast('🐾 Novo Resgate!', `${payload.new.nome} acabou de entrar pra adoção.`, 'sucesso');
+                window.GerenciadorEventos.notificar('novo_animal', payload.new);
+                window.GerenciadorEventos.exibirToast('🐾 Novo Resgate!', `${payload.new.nome} acabou de entrar pra adoção.`, 'sucesso');
                 carregarAnimais();
             })
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'animais' }, (payload) => {
@@ -594,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 db.adicionarOcorrencia(ocorrencia);
 
                 // [OBSERVER] — Notifica observadores sobre nova ocorrência
-                GerenciadorEventos.notificar('nova_ocorrencia', ocorrencia);
+                window.GerenciadorEventos.notificar('nova_ocorrencia', ocorrencia);
 
                 // Exibe confirmação visual — deixa claro quando não foi para o banco
                 if (salvoNoBanco) {
@@ -668,7 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // [OBSERVER] — Notifica sobre novo usuário
-                GerenciadorEventos.notificar('novo_usuario', { nome, email });
+                window.GerenciadorEventos.notificar('novo_usuario', { nome, email });
 
                 formReg.reset();
                 toggleAuth(false);
@@ -859,7 +859,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!resp.ok) throw new Error(adocao.error || 'Não foi possível enviar a solicitação.');
 
                 // [OBSERVER] — Notifica sobre a nova solicitação de adoção
-                GerenciadorEventos.notificar('novo_agendamento', { ...adocao, petNome });
+                window.GerenciadorEventos.notificar('novo_agendamento', { ...adocao, petNome });
 
                 Swal.fire({
                     title:              'SOLICITAÇÃO ENVIADA!',
@@ -903,7 +903,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (ocorrencias.length === 0) {
                 // [OBSERVER] — toast de aviso quando não há ocorrências
-                GerenciadorEventos.exibirToast(
+                window.GerenciadorEventos.exibirToast(
                     '⚠️ Nenhuma Ocorrência',
                     'Envie uma denúncia primeiro para ver o Observer em ação!',
                     'alerta'
@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const ocorrencias = db.getOcorrencias();
         // Exibe as 3 mais recentes
         ocorrencias.slice(-3).reverse().forEach(oc => {
-            GerenciadorEventos._atualizarAreaStatus(oc);
+            window.GerenciadorEventos._atualizarAreaStatus(oc);
         });
     }
 
@@ -1071,7 +1071,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await supaSignOut();
         togglePerfilDropdown(false);
         esconderPerfilAgente();
-        GerenciadorEventos.exibirToast('Até logo!', 'Sessão encerrada com sucesso.', 'info');
+        window.GerenciadorEventos.exibirToast('Até logo!', 'Sessão encerrada com sucesso.', 'info');
     };
 
     window.abrirPainel = () => {
@@ -1230,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (!resp.ok) throw new Error((await resp.json()).error || 'Falha ao atualizar');
 
-            GerenciadorEventos.exibirToast(
+            window.GerenciadorEventos.exibirToast(
                 status === 'aprovada' ? '✅ Adoção Aprovada' : '⛔ Adoção Recusada',
                 status === 'aprovada' ? 'O animal foi marcado como adotado.' : 'O animal voltou a ficar disponível.',
                 'sucesso'
@@ -1355,7 +1355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
 
         db.atualizarStatusOcorrencia(id, novoStatus);
-        GerenciadorEventos.exibirToast('✅ Status Atualizado', `Ocorrência marcada como: <strong>${novoStatus}</strong>`, 'sucesso');
+        window.GerenciadorEventos.exibirToast('✅ Status Atualizado', `Ocorrência marcada como: <strong>${novoStatus}</strong>`, 'sucesso');
     };
 
     // Fechar painel clicando fora
@@ -1386,11 +1386,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (idx === -1) {
             favoritos.push(nome);
             btn.classList.add('favoritado');
-            GerenciadorEventos.exibirToast('❤️ Favoritado!', `<strong>${nome}</strong> adicionado aos seus favoritos.`, 'sucesso');
+            window.GerenciadorEventos.exibirToast('❤️ Favoritado!', `<strong>${nome}</strong> adicionado aos seus favoritos.`, 'sucesso');
         } else {
             favoritos.splice(idx, 1);
             btn.classList.remove('favoritado');
-            GerenciadorEventos.exibirToast('💔 Removido', `<strong>${nome}</strong> removido dos favoritos.`, 'alerta');
+            window.GerenciadorEventos.exibirToast('💔 Removido', `<strong>${nome}</strong> removido dos favoritos.`, 'alerta');
         }
         localStorage.setItem('gp_favoritos', JSON.stringify(favoritos));
     };
@@ -1439,7 +1439,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     window.copiarChavePix = () => {
         navigator.clipboard.writeText('guardpets@resende.org').then(() => {
-            GerenciadorEventos.exibirToast('✅ Copiado!', 'Chave PIX copiada para a área de transferência.', 'sucesso');
+            window.GerenciadorEventos.exibirToast('✅ Copiado!', 'Chave PIX copiada para a área de transferência.', 'sucesso');
         });
     };
 

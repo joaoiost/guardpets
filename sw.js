@@ -33,6 +33,10 @@ self.addEventListener('fetch', e => {
                 caches.open(CACHE).then(c => c.put(e.request, copia));
                 return resp;
             })
-            .catch(() => caches.match(e.request))
+            .catch(async () => {
+                const cached = await caches.match(e.request);
+                if (cached) return cached;
+                throw new Error('offline e sem cache para ' + e.request.url);
+            })
     );
 });
